@@ -1,0 +1,349 @@
+{% extends "layout.html" %} {% from 'macros/pagination.html' import render_pagination,
+render_search_controls %} {% block title %}Admin Dashboard - Genius AutoWriter{% endblock %} {% block content %}
+<div class="min-h-screen py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <!-- Header -->
+    <div class="backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-red-600/30" style="background-color: #1F1F1F;">
+      <div class="flex justify-between items-center">
+        <div>
+          <h1 class="text-3xl font-bold text-white">Admin Dashboard</h1>
+          <p class="text-gray-300 mt-2">Manage users and monitor system activity</p>
+        </div>
+        <a
+          href="{{ url_for('create_user') }}"
+          class="bg-red-600 text-white px-6 py-3 rounded-md hover:bg-red-700 font-medium transition-colors"
+        >
+          Create New User
+        </a>
+      </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="p-6 rounded-lg shadow-lg border border-red-600/30" style="background-color: #1F1F1F;">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-red-600/20">
+            <svg
+              class="w-8 h-8 text-red-400"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
+              ></path>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-300">Total Users</p>
+            <p class="text-2xl font-bold text-white">{{ total_users }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-6 rounded-lg shadow-lg border border-red-600/30" style="background-color: #1F1F1F;">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-red-600/20">
+            <svg
+              class="w-8 h-8 text-red-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              ></path>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-300">Total Contents</p>
+            <p class="text-2xl font-bold text-white">{{ total_contents }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-6 rounded-lg shadow-lg border border-red-600/30" style="background-color: #1F1F1F;">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-red-600/20">
+            <svg
+              class="w-8 h-8 text-red-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 10V3L4 14h7v7l9-11h-7z"
+              ></path>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-300">Active Users</p>
+            <p class="text-2xl font-bold text-white">{{ users.items|selectattr('is_active')|list|length }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- User Management -->
+    <div
+      class="backdrop-blur-sm rounded-2xl shadow-xl border border-red-600/30 overflow-hidden"
+      style="background-color: #1f1f1f"
+    >
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold text-white">User Management</h2>
+          <div class="text-sm text-gray-300">Total: {{ users.total }} users</div>
+        </div>
+
+        <!-- Search Controls -->
+        {{ render_search_controls(search, filter_status) }}
+      </div>
+
+      {% if users.items %}
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-600">
+          <thead style="background-color: #2a2a2a;">
+            <tr>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+              >
+                User
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+              >
+                Role
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+              >
+                Status
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+              >
+                Security
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+              >
+                Created
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
+              >
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody style="background-color: #1F1F1F;" class="divide-y divide-gray-600">
+            {% for user in users.items %}
+            <tr class="hover:bg-gray-700/30">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 h-10 w-10">
+                    <div
+                      class="h-10 w-10 rounded-full bg-red-600/20 flex items-center justify-center"
+                    >
+                      <span class="text-red-400 font-medium"
+                        >{{ user.email[0].upper() }}</span
+                      >
+                    </div>
+                  </div>
+                  <div class="ml-4">
+                    <div class="text-sm font-medium text-white">{{ user.email }}</div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                {% if user.is_admin %}
+                <span
+                  class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-purple-600/20 text-purple-300"
+                  >Admin</span
+                >
+                {% else %}
+                <span
+                  class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-600/20 text-blue-300"
+                  >User</span
+                >
+                {% endif %}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                {% if user.is_active %}
+                <span
+                  class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-600/20 text-green-300"
+                  >Active</span
+                >
+                {% else %}
+                <span
+                  class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-600/20 text-red-300"
+                  >Inactive</span
+                >
+                {% endif %}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-white">
+                  {% if user.failed_login_attempts > 0 %}
+                  <span
+                    class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-600/20 text-yellow-300"
+                  >
+                    {{ user.failed_login_attempts }}/3 Failed
+                  </span>
+                  {% else %}
+                  <span
+                    class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-600/20 text-green-300"
+                  >
+                    Secure
+                  </span>
+                  {% endif %}
+                </div>
+                {% if user.locked_until %}
+                <div class="text-xs text-red-400 mt-1">
+                  Locked until {{ user.get_locked_until_myanmar().strftime('%H:%M') if
+                  user.get_locked_until_myanmar() else 'N/A' }}
+                </div>
+                {% endif %}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                {{ user.created_at.strftime('%Y-%m-%d') }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                {% if user.id != current_user.id %}
+                <div class="flex space-x-2">
+                  <button
+                    data-action="toggle-user"
+                    data-user-id="{{ user.id }}"
+                    class="{% if user.is_active %}text-yellow-600 hover:text-yellow-700{% else %}text-green-600 hover:text-green-700{% endif %}"
+                  >
+                    {% if user.is_active %}Deactivate{% else %}Activate{% endif %}
+                  </button>
+                  {% if user.failed_login_attempts > 0 %}
+                  <button
+                    data-action="reset-attempts"
+                    data-user-id="{{ user.id }}"
+                    class="text-green-600 hover:text-green-900"
+                    title="Reset failed login attempts"
+                  >
+                    Reset
+                  </button>
+                  {% endif %}
+                  <button
+                    data-action="delete-user"
+                    data-user-id="{{ user.id }}"
+                    class="text-red-600 hover:text-red-900"
+                  >
+                    Delete
+                  </button>
+                </div>
+                {% else %}
+                <span class="text-gray-500">Current User</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      {{ render_pagination(users, 'admin_dashboard', search, filter_status) }}
+      {% else %}
+      <!-- Empty State -->
+      <div class="text-center py-12">
+        <svg
+          class="mx-auto h-12 w-12 text-gray-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
+          />
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No users found</h3>
+        <p class="mt-1 text-sm text-gray-500">Get started by creating your first user.</p>
+        <div class="mt-6">
+          <a
+            href="{{ url_for('create_user') }}"
+            class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+          >
+            <svg
+              class="-ml-1 mr-2 h-5 w-5"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                clip-rule="evenodd"
+              ></path>
+            </svg>
+            Create New User
+          </a>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Recent Content Activity -->
+    <div
+      class="backdrop-blur-sm p-4 sm:p-6 rounded-2xl shadow-xl border border-red-600/30"
+      style="background-color: #1f1f1f"
+    >
+      <div
+        class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 space-y-2 sm:space-y-0"
+      >
+        <h2 class="text-xl sm:text-2xl font-bold text-white">Recent Content Activity</h2>
+        <a href="{{ url_for('content_history') }}" class="text-sm text-red-600 hover:text-red-300"
+          >View All</a
+        >
+      </div>
+      {% if recent_contents %}
+      <div class="space-y-3">
+        {% for content in recent_contents %}
+        <div class="border-l-4 border-red-600 pl-4 py-2">
+          <div
+            class="flex flex-col sm:flex-row sm:justify-between sm:items-start space-y-2 sm:space-y-0"
+          >
+            <div class="flex-1 min-w-0">
+              <h3 class="font-medium">
+                <a
+                  href="{{ url_for('view_content', content_id=content.id) }}"
+                  class="text-white hover:text-red-300 block sm:inline"
+                >
+                  {{ content.title }}
+                </a>
+              </h3>
+              <p class="text-sm text-gray-300 break-words">by {{ content.author.email }}</p>
+              <p class="text-xs text-gray-400">
+                {{ content.created_at.strftime('%Y-%m-%d %H:%M') }}
+              </p>
+            </div>
+            <span
+              class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-600/20 text-red-300 self-start sm:ml-4"
+            >
+              {{ content.purpose or 'General' }}
+            </span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="text-gray-400 text-center py-8">
+        No content created yet.
+      </p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

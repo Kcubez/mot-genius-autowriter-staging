@@ -1,0 +1,120 @@
+{% extends "layout.html" %} {% block title %}Create User - Genius AutoWriter{% endblock %} {% block
+content %}
+<div class="min-h-screen py-8">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div
+      class="backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-red-600/30"
+      style="background-color: #1f1f1f"
+    >
+      <div class="mb-6">
+        <h1 class="text-3xl font-bold text-white">Create New User</h1>
+        <p class="text-gray-300 mt-2">Add a new user to the system</p>
+      </div>
+
+      <form method="POST" class="create-user-form space-y-6">
+        {{ form.hidden_tag() }}
+
+        <div class="form-field">
+          {{ form.email.label(class="block text-sm font-medium text-white mb-2") }} {{ form.email(class="w-full p-3 border
+          border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500 text-black bg-white", placeholder="user@gmail.com", onkeydown="return preventSpaceKey(event)", oninput="cleanInput(event)", onpaste="setTimeout(() => cleanInput(event), 10)", autocomplete="off") }} {% if
+          form.email.errors %}
+          <div class="form-error">
+            {% for error in form.email.errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="form-field">
+          {{ form.password.label(class="block text-sm font-medium text-white mb-2") }}
+          <div class="password-input-container">
+            {{ form.password(class="password-input", id="password", onkeydown="return preventSpaceKey(event)", oninput="cleanInput(event)", onpaste="setTimeout(() => cleanInput(event), 10)", autocomplete="off") }}
+            <button type="button" class="password-toggle-btn" aria-label="Show password">
+              <!-- Eye Open Icon -->
+              <svg class="eye-open" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                />
+              </svg>
+              <!-- Eye Closed Icon -->
+              <svg class="eye-closed" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
+                />
+              </svg>
+            </button>
+          </div>
+          {% if form.password.errors %}
+          <div class="form-error">
+            {% for error in form.password.errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+          <p class="text-xs text-gray-400 mt-1">
+            Minimum 6 characters - Password strength will be shown below
+          </p>
+        </div>
+
+        <div>
+          {{ form.is_admin.label(class="block text-sm font-medium text-white mb-2") }} {{
+          form.is_admin(class="w-full p-3 border border-gray-300 rounded-md focus:ring-red-500
+          focus:border-red-500 text-black bg-white") }} {% if form.is_admin.errors %}
+          <div class="text-red-500 text-sm mt-1">
+            {% for error in form.is_admin.errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="flex space-x-4">
+          {{ form.submit(class="flex-1 bg-red-600 text-white py-3 rounded-md hover:bg-red-700
+          font-medium transition-colors") }}
+          <a
+            href="{{ url_for('admin_dashboard') }}"
+            class="flex-1 bg-gray-500 text-white py-3 rounded-md hover:bg-gray-600 font-medium transition-colors text-center"
+          >
+            Cancel
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+// Prevent space key in password and email fields
+function preventSpaceKey(event) {
+  // Check if the pressed key is space (keyCode 32 or key ' ')
+  if (event.keyCode === 32 || event.key === ' ' || event.key === 'Spacebar') {
+    // Prevent the default action (typing the space)
+    event.preventDefault();
+    event.stopPropagation();
+    return false;
+  }
+  return true;
+}
+
+// Additional function to clean input on paste and input events
+function cleanInput(event) {
+  const input = event.target;
+  // Remove all spaces from the input value
+  input.value = input.value.replace(/\s/g, '');
+}
+</script>
+
+{% endblock %}
