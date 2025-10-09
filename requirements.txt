@@ -10,3 +10,4 @@ Flask-WTF
 WTForms
 Flask-Bcrypt
 email-validator
+Pillow
