@@ -3,8 +3,35 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
-  margin: 2rem 0;
+  gap: 1.25rem;
+  margin: 2.5rem 0 1rem;
+}
+
+.pagination-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  margin: 0 6px;
+}
+
+.pagination-arrow {
+  font-weight: 800;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination-btn-prev svg {
+  margin-left: 0;
+}
+
+.pagination-btn-next svg {
+  margin-right: 0;
 }
 
 /* Mobile Pagination (Small Screens) */
@@ -24,7 +51,7 @@
   .pagination-mobile {
     display: none;
   }
-  
+
   .pagination-desktop {
     display: flex;
     flex-direction: column;
@@ -48,12 +75,12 @@
 .pagination-controls-desktop {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
-  background: #2A2A2A;
-  border-radius: 8px;
-  padding: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  border: 1px solid #4a5568;
+  gap: 0.35rem;
+  background: rgba(17, 17, 17, 0.85);
+  border-radius: 9999px;
+  padding: 6px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 /* Pagination Buttons */
@@ -61,28 +88,33 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 6px;
+  min-width: 48px;
+  height: 44px;
+  border-radius: 9999px;
   text-decoration: none;
-  font-weight: 500;
-  font-size: 14px;
-  transition: all 0.2s ease;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  transition: all 0.25s ease;
   color: #e2e8f0;
-  background: transparent;
-  border: none;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.25);
   cursor: pointer;
 }
 
 .pagination-btn:hover:not(.disabled) {
-  background: #4a5568;
-  color: #e2e8f0;
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #ffffff;
+  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.35);
 }
 
 .pagination-btn.disabled {
   color: #d1d5db;
   cursor: not-allowed;
   pointer-events: none;
+  background: rgba(148, 163, 184, 0.2);
+  border-color: transparent;
 }
 
 /* Page Numbers */
@@ -90,27 +122,30 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 6px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   text-decoration: none;
-  font-weight: 500;
-  font-size: 14px;
-  transition: all 0.2s ease;
-  color: #e2e8f0;
-  background: transparent;
+  font-weight: 600;
+  font-size: 15px;
+  transition: all 0.25s ease;
+  color: #e5e7eb;
+  background: rgba(255, 255, 255, 0.08);
   cursor: pointer;
 }
 
 .pagination-number:hover:not(.active) {
-  background: #4a5568;
-  color: #e2e8f0;
+  background: rgba(239, 68, 68, 0.25);
+  color: #fff;
+  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.35);
 }
 
 .pagination-number.active {
   background: #dc2626;
   color: white;
   font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 15px 30px rgba(220, 38, 38, 0.4);
 }
 
 /* Current Page (Mobile) */
@@ -118,13 +153,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 6px;
+  width: 48px;
+  height: 44px;
+  border-radius: 12px;
   background: #dc2626;
   color: white;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 16px;
+  box-shadow: 0 15px 30px rgba(220, 38, 38, 0.4);
 }
 
 /* Ellipsis */
@@ -132,25 +168,26 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  color: #9ca3af;
-  font-weight: 500;
+  width: 44px;
+  height: 44px;
+  color: #a1a1aa;
+  font-weight: 600;
+  font-size: 18px;
   cursor: default;
 }
 /* Mobile Responsive Adjustments */
 @media (max-width: 640px) {
   .pagination-controls-mobile,
   .pagination-controls-desktop {
-    gap: 0.125rem;
-    padding: 2px;
+    gap: 0.2rem;
+    padding: 4px;
   }
-  
+
   .pagination-btn,
   .pagination-number,
   .pagination-current {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 38px;
     font-size: 13px;
   }
 }
@@ -250,7 +287,7 @@
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .search-box {
     min-width: auto;
   }

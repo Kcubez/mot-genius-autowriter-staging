@@ -11,3 +11,9 @@ WTForms
 Flask-Bcrypt
 email-validator
 Pillow
+Flask-Compress
+Flask-Caching
+redis
+upstash-redis
+google-genai
+stability-sdk

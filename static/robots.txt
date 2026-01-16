@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: https://mot-genius-autowriter-staging.vercel.app/sitemap.xml

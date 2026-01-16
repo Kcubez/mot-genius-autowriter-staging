@@ -3,30 +3,49 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Favicon using MOT logo with strong cache busting -->
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/MOT.d21a8f07.png') }}?t={{ range(1000, 9999) | random }}" />
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/MOT.d21a8f07.png') }}?t={{ range(1000, 9999) | random }}" />
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/MOT.d21a8f07.png') }}?t={{ range(1000, 9999) | random }}" />
-    <link rel="shortcut icon" href="{{ url_for('static', filename='images/MOT.d21a8f07.png') }}?t={{ range(1000, 9999) | random }}" />
+    <meta name="description" content="{% block description %}Genius AutoWriter - Content generation tool for Myanmar. Create high-quality content in Myanmar and English using advanced technology.{% endblock %}" />
+    <meta name="google" content="notranslate" />
     
-    <!-- Force browser to ignore old favicon -->
-    <link rel="icon" href="data:," />
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/MOT.d21a8f07.png') }}?force={{ range(10000, 99999) | random }}" />
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://mot-genius-autowriter.vercel.app/" />
+    <meta property="og:title" content="{% block og_title %}Genius AutoWriter - Content Generator{% endblock %}" />
+    <meta property="og:description" content="{% block og_description %}Create high-quality content in Myanmar and English using advanced technology. Professional content generation tool for businesses and creators.{% endblock %}" />
+    <meta property="og:image" content="{{ url_for('static', filename='images/MOT.d21a8f07.png', _external=True) }}" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <meta property="og:site_name" content="Genius AutoWriter" />
+    <meta property="og:locale" content="en_US" />
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="{% block twitter_title %}Genius AutoWriter - Content Generator{% endblock %}" />
+    <meta name="twitter:description" content="{% block twitter_description %}Create high-quality content in Myanmar and English using advanced technology.{% endblock %}" />
+    <meta name="twitter:image" content="{{ url_for('static', filename='images/MOT.d21a8f07.png', _external=True) }}" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/MOT.d21a8f07.png') }}" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/MOT.d21a8f07.png') }}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/MOT.d21a8f07.png') }}" />
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/MOT.d21a8f07.png') }}" />
     <title>{% block title %}Genius AutoWriter{% endblock %}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS - Production Build -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/notifications.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/pagination.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/password-toggle.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom-select.css') }}">
     <script src="{{ url_for('static', filename='js/notifications.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/pagination.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/password-toggle.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/flash-to-toast.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/language-switcher.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/custom-select.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/expiration-countdown.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
-    <script src="{{ url_for('static', filename='js/favicon-refresh.js') }}" defer></script>
     {% block head %}{% endblock %}
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=Poppins:wght@300;400;500;600;700;800&display=swap');
       
       /* Genius AutoWriter Red/Black Theme */
       :root {
@@ -57,7 +76,11 @@
       }
       
       * {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-family: 'PT Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      }
+      
+      h1, h2, h3, h4, h5, h6 {
+        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
       }
       /* Override frequently used Tailwind color utilities with palette */
       .text-indigo-600 {
@@ -179,175 +202,394 @@
         box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000) !important;
       }
 
+      /* Language Switcher Custom Styles */
+      #language-dropdown button[data-lang].active {
+        background-color: #dc2626;
+        color: white;
+      }
+      #language-dropdown button[data-lang]:not(.active) {
+        background-color: white;
+        color: black;
+      }
+
+
     </style>
   </head>
-  <body class="text-white min-h-screen" style="background-color: #1A1A1A;">
-    <nav class="fixed top-0 left-0 right-0 z-50 shadow-lg border-b border-red-600/20" style="background-color: #1F1F1F; backdrop-filter: blur(10px);">
+  <body class="text-white min-h-screen" style="background: linear-gradient(to bottom, #000000 0%, #000000 50%, #450a0a 100%);">
+    <nav class="fixed top-0 left-0 right-0 z-50 shadow-lg" style="background-color: #000000; border-bottom: 1.5px solid #991b1b;">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-20">
+        <div class="flex justify-between items-center py-4">
           <!-- Logo Section -->
           <div class="flex items-center">
-            <a href="{{ url_for('user_dashboard') if current_user.is_authenticated and not current_user.is_admin else url_for('admin_dashboard') if current_user.is_authenticated else url_for('index') }}" class="flex items-center space-x-3 hover:opacity-90 transition-all duration-300 group">
-              <!-- Original Logo Image -->
-              <img 
-                src="{{ url_for('static', filename='images/mot-logo.png') }}" 
-                alt="Genius AutoWriter Logo" 
-                class="w-16 h-16 object-contain group-hover:scale-105 transition-transform duration-300"
-                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            <a href="{{ url_for('user_dashboard') if current_user.is_authenticated and not current_user.is_admin else url_for('admin_dashboard') if current_user.is_authenticated else url_for('index') }}" class="flex items-center space-x-3 cursor-pointer">
+              <img
+                src="{{ url_for('static', filename='images/mot-logo_cropped.png') }}"
+                alt="MOT Logo"
+                class="h-6 w-auto"
               />
-              <!-- Fallback SVG if image fails to load -->
-              <svg width="64" height="64" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="display: none;" class="text-red-500 group-hover:scale-105 transition-transform duration-300">
-                <!-- Left vertical lines -->
-                <rect x="5" y="20" width="3" height="60" fill="currentColor"/>
-                <rect x="10" y="25" width="3" height="50" fill="currentColor"/>
-                <rect x="15" y="30" width="3" height="40" fill="currentColor"/>
-                <rect x="20" y="35" width="3" height="30" fill="currentColor"/>
-                
-                <!-- Center circle -->
-                <circle cx="50" cy="50" r="25" fill="none" stroke="currentColor" stroke-width="8"/>
-                
-                <!-- Right vertical lines -->
-                <rect x="77" y="20" width="8" height="60" fill="currentColor"/>
-                
-                <!-- Top right elements -->
-                <rect x="70" y="15" width="15" height="8" fill="currentColor"/>
-                <circle cx="88" cy="25" r="3" fill="currentColor"/>
-                <circle cx="95" cy="30" r="2" fill="currentColor"/>
-              </svg>
-              <!-- Brand Text -->
-              <div class="hidden sm:flex flex-col justify-center ml-1">
-                <h1 class="text-xl font-bold bg-gradient-to-r from-white text-red-600 to-red-700 bg-clip-text text-transparent leading-tight">Genius AutoWriter</h1>
-                <p class="text-xs text-red-500 font-medium tracking-wide uppercase">Content Generator</p>
+              <div class="flex flex-col">
+                <span class="text-red-500 text-xl md:text-2xl tracking-wider font-bold">Genius Autowriter</span>
               </div>
             </a>
           </div>
+
+          <!-- Spacer to push navigation to the right -->
+          <div class="flex-1"></div>
 
           <!-- Navigation Menu -->
           {% if current_user.is_authenticated %}
-          <div class="hidden md:flex items-center space-x-6">
-            {% if current_user.is_admin %}
-              <a href="{{ url_for('admin_dashboard') }}" class="flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-300 hover:bg-red-600/20 hover:text-red-400 transition-all duration-200 {{ 'bg-red-600/30 text-red-400' if request.endpoint == 'admin_dashboard' }}">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          <div class="hidden md:flex items-center space-x-3" style="position: relative; z-index: 100;">
+            {% if not current_user.is_admin %}
+              <a href="{{ url_for('user_dashboard') }}" class="flex items-center space-x-2 px-4 py-2 rounded-full text-white transition-all duration-200 {{ 'bg-red-600 hover:bg-red-700' if request.endpoint == 'user_dashboard' else 'hover:bg-red-600/20' }}" style="pointer-events: auto; cursor: pointer;">
+                <!-- Lucide wand-sparkles icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/>
+                  <path d="m14 7 3 3"/>
+                  <path d="M5 6v4"/>
+                  <path d="M19 14v4"/>
+                  <path d="M10 2v2"/>
+                  <path d="M7 8H3"/>
+                  <path d="M21 16h-4"/>
+                  <path d="M11 3H9"/>
                 </svg>
-                <span class="font-medium" data-translate="Dashboard">Dashboard</span>
+                <span class="text-sm font-medium" data-translate="Generator">Generator</span>
               </a>
-              <a href="{{ url_for('create_user') }}" class="flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-300 hover:bg-red-600/20 hover:text-red-400 transition-all duration-200 {{ 'bg-red-600/30 text-red-400' if request.endpoint == 'create_user' }}">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+              {% if current_user.user_type == 'normal' %}
+              <a href="{{ url_for('voice_generator') }}" class="flex items-center space-x-2 px-4 py-2 rounded-full text-white transition-all duration-200 {{ 'bg-red-600 hover:bg-red-700' if request.endpoint == 'voice_generator' else 'hover:bg-red-600/20' }}">
+                <!-- Lucide Mic icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                  <line x1="12" x2="12" y1="19" y2="22"/>
                 </svg>
-                <span class="font-medium" data-translate="Users">Users</span>
+                <span class="text-sm font-medium" data-translate="Generator With Voice">Generator With Voice</span>
+              </a>
+              {% endif %}
+              <a href="{{ url_for('contents_dashboard') }}" class="flex items-center space-x-2 px-4 py-2 rounded-full text-white transition-all duration-200 {{ 'bg-red-600 hover:bg-red-700' if request.endpoint == 'contents_dashboard' else 'hover:bg-red-600/20' }}" style="pointer-events: auto; cursor: pointer;">
+                <!-- Lucide BarChart3 icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 3v18h18"/>
+                  <path d="M18 17V9"/>
+                  <path d="M13 17V5"/>
+                  <path d="M8 17v-3"/>
+                </svg>
+                <span class="text-sm font-medium" data-translate="Dashboard">Dashboard</span>
               </a>
             {% else %}
-              <a href="{{ url_for('user_dashboard') }}" class="flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-300 hover:bg-red-600/20 hover:text-red-400 transition-all duration-200 {{ 'bg-red-600/30 text-red-400' if request.endpoint == 'user_dashboard' }}">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              <a href="{{ url_for('admin_dashboard') }}" class="flex items-center space-x-2 px-4 py-2 rounded-full text-white transition-all duration-200 {{ 'bg-red-600 hover:bg-red-700' if request.endpoint == 'admin_dashboard' else 'hover:bg-red-600/20' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
-                <span class="font-medium" data-translate="Generator">Generator</span>
-              </a>
-              <a href="{{ url_for('content_history') }}" class="flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-300 hover:bg-red-600/20 hover:text-red-400 transition-all duration-200 {{ 'bg-red-600/30 text-red-400' if request.endpoint == 'content_history' }}">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <span class="font-medium" data-translate="Dashboard">Dashboard</span>
+                <span class="text-sm font-medium" data-translate="Dashboard">Dashboard</span>
               </a>
             {% endif %}
           </div>
           {% endif %}
 
-          <!-- Language Toggle -->
-          <div class="flex items-center space-x-2">
-            <div class="relative">
-              <select id="language-selector" class="bg-gray-800/50 border border-gray-600/30 text-white text-sm rounded-lg px-3 py-2 appearance-none cursor-pointer hover:bg-gray-700/50 transition-all duration-200 pr-8">
-                <option value="my">မြန်မာ</option>
-                <option value="en">English</option>
-              </select>
-              <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <!-- Right Side Menu -->
+          {% if current_user.is_authenticated %}
+          <!-- Desktop Burger Menu Button -->
+          <button id="desktopMenuButton" onclick="toggleDesktopMenu()" class="hidden md:flex items-center justify-center w-10 h-10 rounded-lg hover:bg-red-600/20 transition-colors duration-200 ml-4">
+            <svg id="desktopMenuIcon" class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+            <svg id="desktopMenuCloseIcon" class="w-6 h-6 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+          {% else %}
+          <!-- Language Switcher for non-authenticated users (Desktop only) -->
+          <div class="hidden md:flex items-center space-x-3">
+            <div class="relative" id="language-switcher">
+              <button id="language-button" class="bg-white text-black px-5 py-2 rounded-2xl flex items-center space-x-2 hover:bg-gray-100 transition-all duration-200 border-none focus:ring-0">
+                <img id="current-flag" src="{{ url_for('static', filename='images/MyanmarFlag.png') }}" alt="Flag" class="w-5 h-5 rounded-full object-cover">
+                <span id="current-lang" class="text-base font-medium">EN</span>
+                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
+              </button>
+              
+              <!-- Dropdown Menu -->
+              <div id="language-dropdown" class="hidden absolute right-0 mt-2 w-full bg-white rounded-2xl shadow-xl overflow-hidden z-50">
+                <button data-lang="en" class="w-full px-5 py-2 flex items-center space-x-2 transition-all duration-200 text-left text-black" style="background-color: white;" onmouseover="this.style.backgroundColor='#F3F4F6'" onmouseout="this.style.backgroundColor='white'">
+                  <img src="{{ url_for('static', filename='images/UKFlag.png') }}" alt="UK Flag" class="w-5 h-5 rounded-full object-cover">
+                  <span class="text-base font-medium">EN</span>
+                </button>
+                <button data-lang="my" class="w-full px-5 py-2 flex items-center space-x-2 transition-all duration-200 text-left text-black" style="background-color: white;" onmouseover="this.style.backgroundColor='#F3F4F6'" onmouseout="this.style.backgroundColor='white'">
+                  <img src="{{ url_for('static', filename='images/MyanmarFlag.png') }}" alt="Myanmar Flag" class="w-5 h-5 rounded-full object-cover">
+                  <span class="text-base font-medium">MM</span>
+                </button>
               </div>
             </div>
-          </div>
-
-          <!-- User Menu -->
-          {% if current_user.is_authenticated %}
-          <div class="flex items-center space-x-6">
-            <!-- User Info -->
-            <div class="hidden lg:flex items-center space-x-4 px-4 py-3 bg-gradient-to-r from-red-600/10 to-red-700/10 rounded-xl border border-red-600/20 backdrop-blur-sm">
-              <div class="relative">
-                <div class="w-10 h-10 bg-gradient-to-br from-red-600 to-red-700 rounded-full flex items-center justify-center shadow-lg">
-                  <span class="text-white text-sm font-bold">{{ current_user.email[0].upper() }}</span>
-                </div>
-                <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-gray-800"></div>
-              </div>
-              <div class="text-sm">
-                <p class="font-semibold text-white">{{ current_user.email }}</p>
-                <p class="text-red-300 text-xs font-medium">{{ 'Administrator' if current_user.is_admin else 'Content Creator' }}</p>
-              </div>
-            </div>
-
-            <!-- Mobile Menu Button -->
-            <button class="md:hidden p-3 rounded-xl text-gray-300 hover:bg-red-600/20 hover:text-white transition-all duration-200" onclick="toggleMobileMenu()">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-
-            <!-- Logout Button -->
-            <a href="{{ url_for('logout') }}" class="flex items-center space-x-2 px-5 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-              <span data-translate="Logout">Logout</span>
-            </a>
+            <!-- Hidden select for compatibility -->
+            <select id="language-selector" style="display: none">
+              <option value="my">MM</option>
+              <option value="en">EN</option>
+            </select>
           </div>
           {% endif %}
+          
+          <!-- Mobile Menu Button -->
+          <button onclick="toggleMobileMenu()" class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg hover:bg-red-600/20 transition-colors duration-200">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
       </div>
 
-      <!-- Mobile Menu -->
-      <div id="mobileMenu" class="hidden md:hidden bg-gray-900/95 backdrop-blur-md border-t border-red-600/30">
-        <div class="px-4 py-4 space-y-3">
-          {% if current_user.is_authenticated %}
-            <!-- User Info Mobile -->
-            <div class="flex items-center space-x-3 px-4 py-3 bg-red-600/20 rounded-xl border border-red-600/30 mb-4">
-              <div class="w-10 h-10 bg-gradient-to-br from-red-600 to-red-700 rounded-full flex items-center justify-center">
-                <span class="text-white text-sm font-bold">{{ current_user.email[0].upper() }}</span>
+      <!-- Desktop Slide-out Menu (Below Navigation) -->
+      {% if current_user.is_authenticated %}
+      <div id="desktopMenu" style="position: fixed; top: 73px; left: 0; right: 0; z-index: 40; background-color: #000000; border-bottom: 1.5px solid #991b1b; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); display: none;">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div class="flex items-center justify-between">
+            <!-- User Info Section -->
+            <div class="flex items-center space-x-4">
+              <div style="width: 56px; height: 56px; background-color: #4b5563; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <svg xmlns="http://www.w3.org/2000/svg" style="width: 28px; height: 28px; color: #d1d5db;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
               </div>
-              <div class="text-sm">
-                <p class="font-semibold text-white">{{ current_user.email }}</p>
-                <p class="text-red-300">{{ 'Administrator' if current_user.is_admin else 'Content Creator' }}</p>
+              <div style="display: flex; flex-direction: column;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="color: white; font-weight: 500; font-size: 1.125rem;">{{ current_user.email.split('@')[0] }}</span>
+                  {% if current_user.user_type == 'trial' %}
+                  <span style="background-color: #4b5563; color: white; font-size: 0.75rem; font-weight: 700; padding: 4px 12px; border-radius: 9999px; text-transform: uppercase;">TRIAL</span>
+                  <span style="color: white; font-size: 0.875rem; font-weight: 500;">Credit</span>
+                  <span id="desktop-menu-credit-count" style="background-color: #374151; color: white; font-size: 0.875rem; font-weight: 700; padding: 4px 12px; border-radius: 9999px; min-width: 36px; text-align: center;">{{ current_user.get_remaining_content_count() }}</span>
+                  {% else %}
+                  <span style="background-color: #4b5563; color: white; font-size: 0.75rem; font-weight: 700; padding: 4px 12px; border-radius: 9999px;">{{ 'ADMIN' if current_user.is_admin else 'USER' }}</span>
+                  {% endif %}
+                </div>
+                <p style="color: #9ca3af; font-size: 0.875rem;">{{ current_user.email }}</p>
+                {% if not current_user.is_admin and current_user.expires_at %}
+                <p style="color: #ef4444; font-size: 0.875rem; font-weight: 500;" id="expiration-countdown-desktop" data-expiration="{{ (current_user.expires_at.isoformat() + 'Z') if current_user.expires_at else '' }}" data-user-type="{{ current_user.user_type }}">Expires in: <span class="countdown-timer">{{ current_user.expires_at.strftime('%H:%M:%S') if current_user.expires_at else 'N/A' }}</span></p>
+                {% endif %}
               </div>
             </div>
 
-            {% if current_user.is_admin %}
-              <a href="{{ url_for('admin_dashboard') }}" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-red-600/20 hover:text-red-400 transition-all duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            <!-- Actions Section -->
+            <div class="flex items-center space-x-3">
+              <!-- Logout Button -->
+              <a href="{{ url_for('logout') }}" class="logout-btn-desktop flex items-center space-x-2 px-6 py-2 bg-white border-2 border-red-500 rounded-2xl transition-all duration-200" style="text-decoration: none;">
+                <svg xmlns="http://www.w3.org/2000/svg" class="logout-icon-desktop h-5 w-5 transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color: #ef4444;">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                 </svg>
-                <span class="font-medium">Admin Dashboard</span>
+                <span class="logout-text-desktop text-base font-medium transition-colors duration-200" data-translate="Logout" style="color: #ef4444;">Logout</span>
               </a>
-              <a href="{{ url_for('create_user') }}" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-red-600/20 hover:text-red-400 transition-all duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                </svg>
-                <span class="font-medium">Manage Users</span>
-              </a>
+              
+              <!-- Language Switcher Desktop Menu -->
+              <div class="relative">
+                <button id="language-button-desktop-menu" class="bg-white text-black px-5 py-2 rounded-2xl flex items-center space-x-2 hover:bg-gray-100 transition-all duration-200 border-none focus:ring-0">
+                  <img id="current-flag-desktop-menu" src="{{ url_for('static', filename='images/MyanmarFlag.png') }}" alt="Flag" class="w-5 h-5 rounded-full object-cover">
+                  <span id="current-lang-desktop-menu" class="text-base font-medium">MM</span>
+                  <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </button>
+                <div id="language-dropdown-desktop-menu" class="hidden absolute right-0 mt-2 w-full bg-white rounded-2xl shadow-xl overflow-hidden z-50">
+                  <button data-lang="en" class="desktop-menu-lang-btn w-full px-5 py-2 flex items-center space-x-2 transition-all duration-200 text-black text-left" style="background-color: white;" onmouseover="this.style.backgroundColor='#F3F4F6'" onmouseout="this.style.backgroundColor='white'">
+                    <img src="{{ url_for('static', filename='images/UKFlag.png') }}" alt="UK Flag" class="w-5 h-5 rounded-full object-cover">
+                    <span class="text-base font-medium">EN</span>
+                  </button>
+                  <button data-lang="my" class="desktop-menu-lang-btn w-full px-5 py-2 flex items-center space-x-2 transition-all duration-200 text-black text-left" style="background-color: white;" onmouseover="this.style.backgroundColor='#F3F4F6'" onmouseout="this.style.backgroundColor='white'">
+                    <img src="{{ url_for('static', filename='images/MyanmarFlag.png') }}" alt="Myanmar Flag" class="w-5 h-5 rounded-full object-cover">
+                    <span class="text-base font-medium">MM</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <style>
+        .logout-btn-desktop:hover {
+          background-color: #dc2626 !important;
+          border-color: #dc2626 !important;
+        }
+        .logout-btn-desktop:hover .logout-icon-desktop,
+        .logout-btn-desktop:hover .logout-text-desktop {
+          color: white !important;
+        }
+        
+        /* Hide desktop menu on mobile */
+        @media (max-width: 768px) {
+          #desktopMenu {
+            display: none !important;
+          }
+        }
+      </style>
+      {% endif %}
+
+      <!-- Mobile Menu -->
+      <div id="mobileMenu" class="hidden fixed top-0 left-0 right-0 z-50 md:hidden" style="background-color: rgba(0, 0, 0, 0.98);">
+        <div class="flex flex-col">
+          <!-- Mobile Menu Header -->
+          <div class="flex justify-between items-center px-4 py-4 border-b border-red-600/30">
+            <a href="{{ url_for('user_dashboard') if current_user.is_authenticated and not current_user.is_admin else url_for('admin_dashboard') if current_user.is_authenticated else url_for('index') }}" class="flex items-center space-x-3">
+              <img src="{{ url_for('static', filename='images/mot-logo_cropped.png') }}" alt="MOT Logo" class="h-6 w-auto" />
+              <span class="text-red-500 text-xl tracking-wider font-bold">Genius Autowriter</span>
+            </a>
+            <button onclick="toggleMobileMenu()" class="text-white hover:text-red-500 transition-colors">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Mobile Menu Content -->
+          <div class="overflow-y-auto px-6 py-4">
+            {% if current_user.is_authenticated %}
+              <!-- Navigation Links (Horizontal Row Layout) -->
+              <div class="border-b border-red-600/30 mb-6">
+                {% if not current_user.is_admin %}
+                  <div class="flex items-center gap-2 overflow-x-auto" style="scrollbar-width: none; -ms-overflow-style: none; padding-bottom: 18px;">
+                    <style>
+                      .overflow-x-auto::-webkit-scrollbar {
+                        display: none;
+                      }
+                    </style>
+                    <a href="{{ url_for('user_dashboard') }}" class="flex items-center space-x-2 px-4 py-2 rounded-full text-white transition-all duration-200 whitespace-nowrap {{ 'bg-red-600' if request.endpoint == 'user_dashboard' else 'hover:bg-red-600/20' }}" onclick="toggleMobileMenu()">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/>
+                        <path d="m14 7 3 3"/>
+                        <path d="M5 6v4"/>
+                        <path d="M19 14v4"/>
+                        <path d="M10 2v2"/>
+                        <path d="M7 8H3"/>
+                        <path d="M21 16h-4"/>
+                        <path d="M11 3H9"/>
+                      </svg>
+                      <span class="font-medium text-sm" data-translate="Generator">Generator</span>
+                    </a>
+                    {% if current_user.user_type == 'normal' %}
+                    <a href="{{ url_for('voice_generator') }}" class="flex items-center space-x-2 px-4 py-2 rounded-full text-white transition-all duration-200 whitespace-nowrap {{ 'bg-red-600' if request.endpoint == 'voice_generator' else 'hover:bg-red-600/20' }}" onclick="toggleMobileMenu()">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                        <line x1="12" x2="12" y1="19" y2="22"/>
+                      </svg>
+                      <span class="font-medium text-sm" data-translate="Generator With Voice">Generator With Voice</span>
+                    </a>
+                    {% endif %}
+                    <a href="{{ url_for('contents_dashboard') }}" class="flex items-center space-x-2 px-4 py-2 rounded-full text-white transition-all duration-200 whitespace-nowrap {{ 'bg-red-600' if request.endpoint == 'contents_dashboard' else 'hover:bg-red-600/20' }}" onclick="toggleMobileMenu()">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 3v18h18"/>
+                        <path d="M18 17V9"/>
+                        <path d="M13 17V5"/>
+                        <path d="M8 17v-3"/>
+                      </svg>
+                      <span class="font-medium text-sm" data-translate="Dashboard">Dashboard</span>
+                    </a>
+                  </div>
+                {% else %}
+                  <a href="{{ url_for('admin_dashboard') }}" class="flex items-center space-x-3 px-4 py-3 rounded-full text-white transition-all duration-200 {{ 'bg-red-600' if request.endpoint == 'admin_dashboard' else 'hover:bg-red-600/20' }}" onclick="toggleMobileMenu()">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    <span class="font-medium" data-translate="Dashboard">Dashboard</span>
+                  </a>
+                {% endif %}
+              </div>
+
+              <!-- User Info -->
+              <div class="flex items-center space-x-3 mb-3">
+                <div class="w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </div>
+                <div class="flex flex-col">
+                  <div class="flex items-center space-x-2">
+                    <span class="text-white font-medium text-base">{{ current_user.email.split('@')[0] }}</span>
+                    {% if current_user.user_type == 'trial' %}
+                    <span style="background-color: #4b5563; color: white; font-size: 0.75rem; font-weight: 700; padding: 4px 12px; border-radius: 9999px; text-transform: uppercase;">TRIAL</span>
+                    <span style="color: white; font-size: 0.875rem; font-weight: 500;">Credit</span>
+                    <span id="mobile-menu-credit-count" style="background-color: #374151; color: white; font-size: 0.875rem; font-weight: 700; padding: 4px 12px; border-radius: 9999px; min-width: 32px; text-align: center;">{{ current_user.get_remaining_content_count() }}</span>
+                    {% else %}
+                    <span style="background-color: #4b5563; color: white; font-size: 0.75rem; font-weight: 700; padding: 4px 12px; border-radius: 9999px;">{{ 'ADMIN' if current_user.is_admin else 'USER' }}</span>
+                    {% endif %}
+                  </div>
+                  <p class="text-gray-400 text-sm">{{ current_user.email }}</p>
+                  {% if not current_user.is_admin and current_user.expires_at %}
+                  <p class="text-red-500 text-sm font-medium" id="expiration-countdown-mobile" data-expiration="{{ (current_user.expires_at.isoformat() + 'Z') if current_user.expires_at else '' }}" data-user-type="{{ current_user.user_type }}">Expires in: <span class="countdown-timer">{{ current_user.expires_at.strftime('%H:%M:%S') if current_user.expires_at else 'N/A' }}</span></p>
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- Horizontal Layout for Logout and Language Switcher (Below Profile) -->
+              <div class="flex items-center" style="gap: 12px;">
+                <!-- Logout Button -->
+                <a href="{{ url_for('logout') }}" class="logout-btn-mobile flex items-center justify-center space-x-2 flex-1 px-4 py-2 bg-white rounded-2xl transition-all duration-200" style="text-decoration: none; border: none;">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="logout-icon-mobile h-5 w-5 transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color: #ef4444;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  <span class="logout-text-mobile text-base font-medium transition-colors duration-200" data-translate="Logout" style="color: #ef4444;">Logout</span>
+                </a>
+                
+                <!-- Language Switcher Mobile -->
+                <div class="relative">
+                  <button id="language-button-mobile" class="bg-white text-black px-3 py-2 rounded-2xl flex items-center space-x-2 hover:bg-gray-100 transition-all duration-200 border-none focus:ring-0" style="min-width: 105px;">
+                    <img id="current-flag-mobile" src="{{ url_for('static', filename='images/MyanmarFlag.png') }}" alt="Flag" class="w-5 h-5 rounded-full object-cover">
+                    <span id="current-lang-mobile" class="text-base font-medium">EN</span>
+                    <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                  </button>
+                  <div id="language-dropdown-mobile" class="hidden fixed bg-white rounded-2xl shadow-xl overflow-hidden z-50" style="width: 105px;">
+                    <button data-lang="en" class="mobile-lang-btn w-full px-3 py-2 flex items-center space-x-2 transition-all duration-200 text-black text-left" style="background-color: white;" onmouseover="this.style.backgroundColor='#F3F4F6'" onmouseout="this.style.backgroundColor='white'">
+                      <img src="{{ url_for('static', filename='images/UKFlag.png') }}" alt="UK Flag" class="w-5 h-5 rounded-full object-cover">
+                      <span class="text-base font-medium">EN</span>
+                    </button>
+                    <button data-lang="my" class="mobile-lang-btn w-full px-3 py-2 flex items-center space-x-2 transition-all duration-200 text-black text-left" style="background-color: white;" onmouseover="this.style.backgroundColor='#F3F4F6'" onmouseout="this.style.backgroundColor='white'">
+                      <img src="{{ url_for('static', filename='images/MyanmarFlag.png') }}" alt="Myanmar Flag" class="w-5 h-5 rounded-full object-cover">
+                      <span class="text-base font-medium">MM</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <style>
+                .logout-btn-mobile:hover {
+                  background-color: #dc2626 !important;
+                  border-color: #dc2626 !important;
+                }
+                .logout-btn-mobile:hover .logout-icon-mobile,
+                .logout-btn-mobile:hover .logout-text-mobile {
+                  color: white !important;
+                }
+              </style>
             {% else %}
-              <a href="{{ url_for('user_dashboard') }}" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-red-600/20 hover:text-red-400 transition-all duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-                <span class="font-medium">Content Generator</span>
-              </a>
-              <a href="{{ url_for('content_history') }}" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-red-600/20 hover:text-red-400 transition-all duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <span class="font-medium">My Content Library</span>
-              </a>
+              <!-- Mobile Menu Footer for non-authenticated users -->
+              <div class="pt-4 px-4">
+                <!-- Language Switcher for non-authenticated users (Exact Desktop Style) -->
+                <div class="relative" id="language-switcher-mobile-menu" style="margin-left: auto; width: fit-content;">
+                  <button id="language-button-mobile-menu" class="bg-white text-black px-5 py-2 rounded-2xl flex items-center space-x-2 hover:bg-gray-100 transition-all duration-200 border-none focus:ring-0">
+                    <img id="current-flag-mobile-menu" src="{{ url_for('static', filename='images/MyanmarFlag.png') }}" alt="Flag" class="w-5 h-5 rounded-full object-cover">
+                    <span id="current-lang-mobile-menu" class="text-base font-medium">EN</span>
+                    <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                  </button>
+                  
+                  <!-- Dropdown Menu (Fixed positioning to avoid overflow) -->
+                  <div id="language-dropdown-mobile-menu" class="hidden fixed bg-white rounded-2xl shadow-xl overflow-hidden" style="z-index: 9999; min-width: 120px;">
+                    <button data-lang="en" class="mobile-menu-lang-btn w-full px-5 py-2 flex items-center space-x-2 transition-all duration-200 text-left text-black" style="background-color: white;" onmouseover="this.style.backgroundColor='#F3F4F6'" onmouseout="this.style.backgroundColor='white'">
+                      <img src="{{ url_for('static', filename='images/UKFlag.png') }}" alt="UK Flag" class="w-5 h-5 rounded-full object-cover">
+                      <span class="text-base font-medium">EN</span>
+                    </button>
+                    <button data-lang="my" class="mobile-menu-lang-btn w-full px-5 py-2 flex items-center space-x-2 transition-all duration-200 text-left text-black" style="background-color: white;" onmouseover="this.style.backgroundColor='#F3F4F6'" onmouseout="this.style.backgroundColor='white'">
+                      <img src="{{ url_for('static', filename='images/MyanmarFlag.png') }}" alt="Myanmar Flag" class="w-5 h-5 rounded-full object-cover">
+                      <span class="text-base font-medium">MM</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             {% endif %}
-          {% endif %}
+          </div>
+          
+          <!-- Full Width Red Line at Bottom of Mobile Menu -->
+          <div style="border-top: 1.5px solid #991b1b;"></div>
         </div>
       </div>
     </nav>
@@ -363,9 +605,306 @@
       {% block content %}{% endblock %}
     </main>
 
-    <footer class="text-center py-6 text-slate-500 text-sm">
-      <p>&copy; {{ now.year }} Genius AutoWriter. All Rights Reserved.</p>
+    <footer class="text-center py-6" style="background: transparent;">
+      <p class="text-red-600 text-sm">Copyright © 2025 Myanmar Online Technology</p>
     </footer>
+
+    <script>
+      // Custom Language Switcher for Layout
+      document.addEventListener('DOMContentLoaded', function () {
+        const languageButton = document.getElementById('language-button');
+        const languageDropdown = document.getElementById('language-dropdown');
+        const currentFlag = document.getElementById('current-flag');
+        const currentLang = document.getElementById('current-lang');
+        
+        // Mobile elements
+        const languageButtonMobile = document.getElementById('language-button-mobile');
+        const languageDropdownMobile = document.getElementById('language-dropdown-mobile');
+        const currentFlagMobile = document.getElementById('current-flag-mobile');
+        const currentLangMobile = document.getElementById('current-lang-mobile');
+        
+        // Desktop menu elements
+        const languageButtonDesktopMenu = document.getElementById('language-button-desktop-menu');
+        const languageDropdownDesktopMenu = document.getElementById('language-dropdown-desktop-menu');
+        const currentFlagDesktopMenu = document.getElementById('current-flag-desktop-menu');
+        const currentLangDesktopMenu = document.getElementById('current-lang-desktop-menu');
+        
+        // Mobile menu elements (for non-authenticated users)
+        const languageButtonMobileMenu = document.getElementById('language-button-mobile-menu');
+        const languageDropdownMobileMenu = document.getElementById('language-dropdown-mobile-menu');
+        const currentFlagMobileMenu = document.getElementById('current-flag-mobile-menu');
+        const currentLangMobileMenu = document.getElementById('current-lang-mobile-menu');
+        
+        const langButtons = document.querySelectorAll('[data-lang]');
+        const mobileLangButtons = document.querySelectorAll('.mobile-lang-btn');
+        const desktopMenuLangButtons = document.querySelectorAll('.desktop-menu-lang-btn');
+        const mobileMenuLangButtons = document.querySelectorAll('.mobile-menu-lang-btn');
+        
+        // Get current language from localStorage or default to 'my'
+        let selectedLang = localStorage.getItem('language') || 'my';
+        
+        // Update UI based on current language
+        function updateLanguageUI(lang) {
+          const myanmarFlag = "{{ url_for('static', filename='images/MyanmarFlag.png') }}";
+          const ukFlag = "{{ url_for('static', filename='images/UKFlag.png') }}";
+          
+          if (lang === 'my') {
+            if (currentFlag) {
+              currentFlag.src = myanmarFlag;
+              currentLang.textContent = 'MM';
+            }
+            if (currentFlagMobile) {
+              currentFlagMobile.src = myanmarFlag;
+              currentLangMobile.textContent = 'MM';
+            }
+            if (currentFlagDesktopMenu) {
+              currentFlagDesktopMenu.src = myanmarFlag;
+              currentLangDesktopMenu.textContent = 'MM';
+            }
+            if (currentFlagMobileMenu) {
+              currentFlagMobileMenu.src = myanmarFlag;
+              currentLangMobileMenu.textContent = 'MM';
+            }
+          } else {
+            if (currentFlag) {
+              currentFlag.src = ukFlag;
+              currentLang.textContent = 'EN';
+            }
+            if (currentFlagMobile) {
+              currentFlagMobile.src = ukFlag;
+              currentLangMobile.textContent = 'EN';
+            }
+            if (currentFlagDesktopMenu) {
+              currentFlagDesktopMenu.src = ukFlag;
+              currentLangDesktopMenu.textContent = 'EN';
+            }
+            if (currentFlagMobileMenu) {
+              currentFlagMobileMenu.src = ukFlag;
+              currentLangMobileMenu.textContent = 'EN';
+            }
+          }
+        }
+        
+        // Initialize with current language
+        updateLanguageUI(selectedLang);
+        
+        // Toggle desktop dropdown
+        if (languageButton) {
+          languageButton.addEventListener('click', function (e) {
+            e.stopPropagation();
+            languageDropdown.classList.toggle('hidden');
+          });
+        }
+        
+        // Toggle mobile dropdown
+        if (languageButtonMobile) {
+          languageButtonMobile.addEventListener('click', function (e) {
+            e.stopPropagation();
+            languageDropdownMobile.classList.toggle('hidden');
+            
+            // Position dropdown below the button
+            if (!languageDropdownMobile.classList.contains('hidden')) {
+              const rect = languageButtonMobile.getBoundingClientRect();
+              languageDropdownMobile.style.top = (rect.bottom + 8) + 'px';
+              languageDropdownMobile.style.right = (window.innerWidth - rect.right) + 'px';
+            }
+          });
+        }
+        
+        // Toggle desktop menu dropdown
+        if (languageButtonDesktopMenu) {
+          languageButtonDesktopMenu.addEventListener('click', function (e) {
+            e.stopPropagation();
+            languageDropdownDesktopMenu.classList.toggle('hidden');
+          });
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function (e) {
+          if (languageDropdown && !languageDropdown.contains(e.target) && e.target !== languageButton) {
+            languageDropdown.classList.add('hidden');
+          }
+          if (languageDropdownMobile && !languageDropdownMobile.contains(e.target) && e.target !== languageButtonMobile) {
+            languageDropdownMobile.classList.add('hidden');
+          }
+          if (languageDropdownDesktopMenu && !languageDropdownDesktopMenu.contains(e.target) && e.target !== languageButtonDesktopMenu) {
+            languageDropdownDesktopMenu.classList.add('hidden');
+          }
+        });
+        
+        // Handle desktop language selection
+        langButtons.forEach(btn => {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const lang = this.getAttribute('data-lang');
+            selectedLang = lang;
+            
+            // Use window.changeLanguage to notify all components
+            if (typeof window.changeLanguage === 'function') {
+              window.changeLanguage(lang);
+            } else {
+              // Fallback for older code
+              localStorage.setItem('language', lang);
+              if (typeof applyLanguage === 'function') {
+                applyLanguage(lang);
+              }
+            }
+            
+            updateLanguageUI(lang);
+            languageDropdown.classList.add('hidden');
+          });
+        });
+        
+        // Handle desktop menu language selection
+        desktopMenuLangButtons.forEach(btn => {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const lang = this.getAttribute('data-lang');
+            selectedLang = lang;
+            
+            // Use window.changeLanguage to notify all components
+            if (typeof window.changeLanguage === 'function') {
+              window.changeLanguage(lang);
+            } else {
+              // Fallback for older code
+              localStorage.setItem('language', lang);
+              if (typeof applyLanguage === 'function') {
+                applyLanguage(lang);
+              }
+            }
+            
+            updateLanguageUI(lang);
+            languageDropdownDesktopMenu.classList.add('hidden');
+          });
+        });
+        
+        // Handle mobile language selection
+        mobileLangButtons.forEach(btn => {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const lang = this.getAttribute('data-lang');
+            selectedLang = lang;
+            
+            // Use window.changeLanguage to notify all components
+            if (typeof window.changeLanguage === 'function') {
+              window.changeLanguage(lang);
+            } else {
+              // Fallback for older code
+              localStorage.setItem('language', lang);
+              if (typeof applyLanguage === 'function') {
+                applyLanguage(lang);
+              }
+            }
+            
+            updateLanguageUI(lang);
+            languageDropdownMobile.classList.add('hidden');
+          });
+        });
+        
+        // Toggle mobile menu dropdown (for non-authenticated users)
+        if (languageButtonMobileMenu) {
+          languageButtonMobileMenu.addEventListener('click', function (e) {
+            e.stopPropagation();
+            
+            // Toggle dropdown
+            const isHidden = languageDropdownMobileMenu.classList.contains('hidden');
+            languageDropdownMobileMenu.classList.toggle('hidden');
+            
+            // Position dropdown below button if showing
+            if (isHidden) {
+              const rect = languageButtonMobileMenu.getBoundingClientRect();
+              languageDropdownMobileMenu.style.top = (rect.bottom + 8) + 'px';
+              languageDropdownMobileMenu.style.left = rect.left + 'px';
+              languageDropdownMobileMenu.style.width = rect.width + 'px';
+            }
+          });
+        }
+        
+        // Handle mobile menu language selection (for non-authenticated users)
+        mobileMenuLangButtons.forEach(btn => {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const lang = this.getAttribute('data-lang');
+            selectedLang = lang;
+            
+            // Use window.changeLanguage to notify all components
+            if (typeof window.changeLanguage === 'function') {
+              window.changeLanguage(lang);
+            } else {
+              // Fallback for older code
+              localStorage.setItem('language', lang);
+              if (typeof applyLanguage === 'function') {
+                applyLanguage(lang);
+              }
+            }
+            
+            updateLanguageUI(lang);
+            languageDropdownMobileMenu.classList.add('hidden');
+          });
+        });
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function() {
+          if (languageDropdown) languageDropdown.classList.add('hidden');
+          if (languageDropdownMobile) languageDropdownMobile.classList.add('hidden');
+          if (languageDropdownDesktopMenu) languageDropdownDesktopMenu.classList.add('hidden');
+          if (languageDropdownMobileMenu) languageDropdownMobileMenu.classList.add('hidden');
+        });
+      });
+
+      // Desktop menu toggle
+      function toggleDesktopMenu() {
+        const desktopMenu = document.getElementById('desktopMenu');
+        const menuIcon = document.getElementById('desktopMenuIcon');
+        const closeIcon = document.getElementById('desktopMenuCloseIcon');
+        
+        if (desktopMenu) {
+          // Toggle display
+          if (desktopMenu.style.display === 'none' || desktopMenu.style.display === '') {
+            desktopMenu.style.display = 'block';
+          } else {
+            desktopMenu.style.display = 'none';
+          }
+          
+          // Toggle icons
+          if (menuIcon && closeIcon) {
+            menuIcon.classList.toggle('hidden');
+            closeIcon.classList.toggle('hidden');
+          }
+          
+
+        }
+      }
+
+      // Mobile menu toggle
+      function toggleMobileMenu() {
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (mobileMenu) {
+          mobileMenu.classList.toggle('hidden');
+          
+
+        }
+      }
+
+      // Close desktop menu when clicking outside
+      document.addEventListener('click', function(e) {
+        const desktopMenu = document.getElementById('desktopMenu');
+        const desktopMenuButton = e.target.closest('#desktopMenuButton');
+        const menuIcon = document.getElementById('desktopMenuIcon');
+        const closeIcon = document.getElementById('desktopMenuCloseIcon');
+        
+        if (desktopMenu && desktopMenu.style.display === 'block' && 
+            !desktopMenuButton && !desktopMenu.contains(e.target)) {
+          desktopMenu.style.display = 'none';
+          
+          // Reset icons
+          if (menuIcon && closeIcon) {
+            menuIcon.classList.remove('hidden');
+            closeIcon.classList.add('hidden');
+          }
+        }
+      });
+    </script>
     
   </body>
 </html>

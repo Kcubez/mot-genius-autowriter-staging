@@ -12,7 +12,7 @@ const translations = {
     en: 'Content Generator',
   },
   Dashboard: {
-    my: 'မှတ်တမ်း',
+    my: 'စာမျက်နှာများ',
     en: 'Dashboard',
   },
   Users: {
@@ -20,8 +20,12 @@ const translations = {
     en: 'Users',
   },
   Generator: {
-    my: 'ဖန်တီးရန်',
+    my: 'Content ဖန်တီးရန်',
     en: 'Generator',
+  },
+  'Text Input': {
+    my: 'စာသား',
+    en: 'Text Input',
   },
   Logout: {
     my: 'ထွက်ရန်',
@@ -41,29 +45,73 @@ const translations = {
     my: 'Content ဖန်တီးရေးသားရန်နေရာ',
     en: 'Content Generation Form',
   },
+  'Content Details Form': {
+    my: 'Content အသေးစိတ် ဖောင်',
+    en: 'Content Details Form',
+  },
   'Fill in the details below': {
     my: 'အောက်ပါအချက်အလက်များကို ဖြည့်သွင်းပါ',
     en: 'Fill in the details below',
   },
-  'Page Name': {
-    my: 'Page အမည်',
-    en: 'Page Name',
+  'Provide the details for the content you want to generate.': {
+    my: 'ဖန်တီးလိုသော Content အတွက် အသေးစိတ်အချက်အလက်များ ဖြည့်ပေးပါ။',
+    en: 'Provide the details for the content you want to generate.',
+  },
+  'Content Creation': {
+    my: 'Content ဖန်တီးခြင်း',
+    en: 'Content Creation',
+  },
+  'Content Title': {
+    my: 'Content ခေါင်းစဉ်',
+    en: 'Content Title',
   },
   Topic: {
-    my: 'အကြောင်းအရာ',
+    my: 'Content ၏ အဓိကအကြောင်းအရာ',
     en: 'Topic',
   },
   Purpose: {
     my: 'ရည်ရွယ်ချက်',
     en: 'Purpose',
   },
+  'Select the purpose': {
+    my: 'Content ရည်ရွယ်ချက်ကိုရွေးပါ',
+    en: 'Select the purpose',
+  },
+  'Informative Content': {
+    my: 'အသုံးဝင်သတင်း/ အချက်အလက်ပေးခြင်း',
+    en: 'Providing Useful News/Information',
+  },
+  'Audience Engagement': {
+    my: 'Audience တုံ့ပြန်မှုဖော်ခြင်း/ Engagement တိုးခြင်း',
+    en: 'Generating Audience Engagement/ Response',
+  },
+  'Product/Service Sales': {
+    my: 'Product/Service ရောင်းချခြင်း',
+    en: 'Selling Products/Services',
+  },
+  'Emotional Content': {
+    my: 'ခံစားမှုဖန်တီးခြင်း',
+    en: 'Creating a Feeling/Emotion',
+  },
+  'Event/Update Announcement': {
+    my: 'Event ကြေညာခြင်း',
+    en: 'Announcing an Event',
+  },
+  'Educational Content': {
+    my: 'သင်ခန်းစာပေးခြင်း',
+    en: 'Giving Educational Tutorial',
+  },
+  'Product Feature Showcase': {
+    my: 'Product feature ပြခြင်း',
+    en: 'Showing Product Feature/Showcase',
+  },
   Audience: {
     my: 'ပရိသတ်',
     en: 'Audience',
   },
-  'Copywriting Model': {
-    my: 'Copywriting ပုံစံ',
-    en: 'Copywriting Model',
+  'Target Audience': {
+    my: 'ပစ်မှတ်ထားသော သုံးစွဲသူအုပ်စု',
+    en: 'Target Audience',
   },
   'Output Language': {
     my: 'ထွက်လာမည့်ဘာသာစကား',
@@ -73,16 +121,40 @@ const translations = {
     my: 'ရေးသားပုံစံ',
     en: 'Writing Style',
   },
+  'Writing Style / Tone': {
+    my: 'စာရေးပုံစံ / အသံ ပုံစံ',
+    en: 'Writing Style / Tone',
+  },
+  'Select Writing Style': {
+    my: 'ရေးသားပုံစံရွေးပါ',
+    en: 'Select Writing Style',
+  },
+  'Select the writing style or tone': {
+    my: 'စာရေးပုံစံ (သို့) အသံ ပုံစံကို ရွေးချယ်ပါ',
+    en: 'Select the writing style or tone',
+  },
   'Word Count': {
     my: 'စာလုံးအရေအတွက်',
     en: 'Word Count',
+  },
+  'Content Length': {
+    my: 'အကြောင်းအရာ အရှည်',
+    en: 'Content Length',
+  },
+  'Select content length': {
+    my: 'Content Length ကိုရွေးချယ်ပါ',
+    en: 'Select content length',
+  },
+  'Select output language': {
+    my: 'Output Language ကိုရွေးချယ်ပါ',
+    en: 'Select output language',
   },
   Keywords: {
     my: 'အဓိကစကားလုံးများ',
     en: 'Keywords',
   },
   Hashtags: {
-    my: 'ဟက်ရှ်တက်များ',
+    my: 'Hashtags',
     en: 'Hashtags',
   },
   'Call to Action (CTA)': {
@@ -90,24 +162,75 @@ const translations = {
     en: 'Call to Action (CTA)',
   },
   'Negative Constraints': {
-    my: 'မပါဝင်စေလိုသောအရာများ',
+    my: 'တားမြစ်ချက်များ',
     en: 'Negative Constraints',
   },
-  'Reference Links': {
-    my: 'ကိုးကားလင့်များ',
-    en: 'Reference Links',
-  },
   'Include Emojis': {
-    my: 'Emoji များထည့်ရန်',
+    my: 'Emojis ထည့်မှာလား',
     en: 'Include Emojis',
   },
   'Generate Content': {
-    my: 'Content ဖန်တီးရန်',
+    my: 'Content ဖန်တီးပါ',
     en: 'Generate Content',
   },
   'Save Content': {
-    my: 'Content သိမ်းဆည်းရန်',
+    my: 'Content သိမ်းဆည်းမည်',
     en: 'Save Content',
+  },
+  Copy: {
+    my: 'ကူးယူမည်',
+    en: 'Copy',
+  },
+  'Change API Key': {
+    my: 'API key ပြောင်းရန်',
+    en: 'Change API Key',
+  },
+  Change: {
+    my: 'ပြောင်းရန်',
+    en: 'Change',
+  },
+  'Copied!': {
+    my: 'ကူးပြီးပါပြီ!',
+    en: 'Copied!',
+  },
+  Close: {
+    my: 'ပိတ်မည်',
+    en: 'Close',
+  },
+  'Saving...': {
+    my: 'သိမ်းနေသည်...',
+    en: 'Saving...',
+  },
+  Save: {
+    my: 'သိမ်းဆည်းမည်',
+    en: 'Save',
+  },
+
+  // Error Messages
+  "You've reached the maximum limit of generating contents for your trial plan. To continue using Genius AutoWriter without interruption, please upgrade your subscription.":
+    {
+      my: 'သင့် အစမ်းသုံး အစီအစဉ် (Trial plan) အတွက် content ထုတ်လုပ်နိုင်သည့် အများဆုံးပမာဏကို ပြည့်သွားပါပြီ။ Genius AutoWriter ကို ဆက်လက် အသုံးပြုနိုင်ရန် ကျေးဇူးပြု၍ သင်၏ စာရင်းပေးသွင်းမှုကို အဆင့်မြှင့်ပါ',
+      en: "You've reached the maximum limit of generating contents for your trial plan. To continue using Genius AutoWriter without interruption, please upgrade your subscription.",
+    },
+  'Your trial period has ended. Please contact admin for renewal.': {
+    my: 'သင်၏ အစမ်းသုံးကာလ ကုန်ဆုံးသွားပါပြီ။ သက်တမ်းတိုးရန် ကျေးဇူးပြု၍ admin ကို ဆက်သွယ်ပါ။',
+    en: 'Your trial period has ended. Please contact admin for renewal.',
+  },
+  'Your trial period has ended.': {
+    my: 'သင်၏ အစမ်းသုံးကာလ ကုန်ဆုံးသွားပါပြီ',
+    en: 'Your trial period has ended.',
+  },
+  'Your subscription period has ended. Please contact admin for renewal.': {
+    my: 'သင်၏ subscription period ကုန်ဆုံးသွားပါပြီ။ သက်တမ်းတိုးရန် ကျေးဇူးပြု၍ admin ကို ဆက်သွယ်ပါ။',
+    en: 'Your subscription period has ended. Please contact admin for renewal.',
+  },
+  'Your subscription period has ended': {
+    my: 'သင်၏ subscription period ကုန်ဆုံးသွားပါပြီ',
+    en: 'Your subscription period has ended',
+  },
+  'Your account is expired': {
+    my: 'သင်၏ account သက်တမ်းကုန်ဆုံးသွားပါပြီ',
+    en: 'Your account is expired',
   },
 
   // Form Options
@@ -118,6 +241,18 @@ const translations = {
   'မြန်မာ (Myanmar)': {
     my: 'မြန်မာ (Myanmar)',
     en: 'Myanmar (Burmese)',
+  },
+  'Myanmar (မြန်မာ)': {
+    my: 'မြန်မာ (Myanmar)',
+    en: 'Myanmar (မြန်မာ)',
+  },
+  'English (အင်္ဂလိပ်)': {
+    my: 'အင်္ဂလိပ် (English)',
+    en: 'English',
+  },
+  Myanmar: {
+    my: 'မြန်မာ',
+    en: 'Myanmar',
   },
   English: {
     my: 'အင်္ဂလိပ်',
@@ -174,8 +309,16 @@ const translations = {
     en: 'Gemini API Key',
   },
   Login: {
-    my: 'ဝင်ရောက်ရန်',
+    my: 'လော့ဂ်အင်ဝင်မယ်',
     en: 'Login',
+  },
+  'Logging in...': {
+    my: 'လော့ဂ်အင်ဝင်နေသည်...',
+    en: 'Logging in...',
+  },
+  'Remember me': {
+    my: 'မှတ်ထားပါ',
+    en: 'Remember me',
   },
 
   // Placeholders
@@ -183,9 +326,29 @@ const translations = {
     my: 'Page ၏ အမည် သို့မဟုတ် Brand အမည်',
     en: 'Page name or Brand name',
   },
+  'Enter content title': {
+    my: 'Content ခေါင်းစဉ် ထည့်ပါ',
+    en: 'Enter content title',
+  },
   'ဒီနေရာတွင် content ၏ အဓိက အကြောင်းအရာကို ရေးပါ': {
     my: 'ဒီနေရာတွင် content ၏ အဓိက အကြောင်းအရာကို ရေးပါ',
     en: 'Enter the main topic of your content here',
+  },
+  'Write the main topic or draft idea of your content here': {
+    my: 'ဒီနေရာတွင် Content ၏ အဓိကအကြောင်းအရာ သို့မဟုတ် Idea အကြမ်းဖျင်းကို ရေးပါ',
+    en: 'Write the main topic or draft idea of your content here',
+  },
+  'e.g. Young adults aged 20-30': {
+    my: 'ဥပမာ - အသက် ၂၀ မှ ၃၀ ကြား လူငယ်များ',
+    en: 'e.g. Young adults aged 20-30',
+  },
+  'e.g. #DigitalMarketing #OnlineBusiness': {
+    my: 'ဥပမာ - #DigitalMarketing #OnlineBusiness',
+    en: 'e.g. #DigitalMarketing #OnlineBusiness',
+  },
+  'e.g. Do not mention price, avoid offensive words': {
+    my: 'ဥပမာ - စျေးနှုန်းကို မဖော်ပြပါနဲ့၊ ရိုင်းစိုင်းသော စကားလုံးများကို ရှောင်ပါ',
+    en: 'e.g. Do not mention price, avoid offensive words',
   },
   'ဥပမာ - ပညာပေးရန်၊ Engagement ရရှိရန်၊ ရောင်းအားမြှင့်တင်ရန်': {
     my: 'ဥပမာ - ပညာပေးရန်၊ Engagement ရရှိရန်၊ ရောင်းအားမြှင့်တင်ရန်',
@@ -227,13 +390,12 @@ const translations = {
     my: 'ရွေးချယ်ပါ...',
     en: 'Select...',
   },
+  'Select...': {
+    my: 'ရွေးချယ်ပါ...',
+    en: 'Select...',
+  },
 
   // Additional UI Text
-  'Website links စတာတွေ ထည့်နိုင်ပါတယ်။ Genius AutoWriter က ဒီ links တွေကို reference အနေနဲ့ သုံးပြီး content ရေးပေးပါမယ်။':
-    {
-      my: 'Website links တွေ ထည့်နိုင်ပါတယ်။ Genius AutoWriter က ဒီ links တွေကို reference အနေနဲ့ သုံးပြီး content ရေးပေးပါမယ်။',
-      en: 'You can add website links, etc. Genius AutoWriter will use these links as references to write content.',
-    },
   'Content မှာ emoji တွေ ထည့်မလား မထည့်မလား': {
     my: 'Content မှာ emoji တွေ ထည့်မလား မထည့်မလား',
     en: 'Whether to include emojis in content or not',
@@ -245,7 +407,7 @@ const translations = {
     en: 'Keywords (separate keywords with commas)',
   },
   Hashtags: {
-    my: 'ဟက်ရှ်တက်များ',
+    my: 'Hashtags',
     en: 'Hashtags',
   },
   'Call to Action (CTA)': {
@@ -256,17 +418,49 @@ const translations = {
     my: 'မပါဝင်စေလိုသောအရာများ',
     en: 'Negative Constraints',
   },
-  'Reference Links': {
-    my: 'ကိုးကားလင့်များ',
-    en: 'Reference Links',
-  },
   'Upload an image (Optional):': {
     my: 'ပုံတစ်ပုံ ထည့်ပါ (မဖြစ်မနေ မလိုအပ်ပါ):',
     en: 'Upload an image (Optional):',
   },
+  'Upload Image': {
+    my: 'ပုံတင်ရန်',
+    en: 'Upload Image',
+  },
+  'Drop your images here, or browse': {
+    my: 'Drop your images here, or browse',
+    en: 'Drop your images here, or browse',
+  },
+  'Supports: JPG, JPEG2000, PNG': {
+    my: 'Supports: JPG, JPEG2000, PNG',
+    en: 'Supports: JPG, JPEG2000, PNG',
+  },
+  'You can add the hashtags.': {
+    my: 'ပါဝင်စေချင်သော Hashtags များကိုထည့်ပါ',
+    en: 'You can add the hashtags.',
+  },
+  'Things that content should not include.': {
+    my: 'Content ထဲမှာ ပါဝင်စေချင်မသော အကြောင်းအရာများ ဖော်ပြပါ',
+    en: 'Things that content should not include.',
+  },
   'Generated Content:': {
     my: 'ဖန်တီးထားသော Content:',
     en: 'Generated Content:',
+  },
+  'Generated Content': {
+    my: 'ဖန်တီးပြီးသော Content',
+    en: 'Generated Content',
+  },
+  'Review and edit your generated content here.': {
+    my: 'ဖန်တီးထားသော Content ကို ဦးစွာ ကြည့်ပြီး ပြင်ဆင်နိုင်ပါသည်။',
+    en: 'Review and edit your generated content here.',
+  },
+  'Fill out the form to generate your content.': {
+    my: 'ဖောင်ကို ဖြည့်ပြီး Content ဖန်တီးပါ။',
+    en: 'Fill out the form to generate your content.',
+  },
+  'Your content will appear here.': {
+    my: 'သင်၏ ဖန်တီးထားသော Content သည် ဤနေရာတွင် ပေါ်လာမည်။',
+    en: 'Your content will appear here.',
   },
   'View My Contents': {
     my: 'Content ကြည့်ရန်',
@@ -295,6 +489,18 @@ const translations = {
   'Total Contents': {
     my: 'စုစုပေါင်း Content များ',
     en: 'Total Contents',
+  },
+  'Remaining Contents': {
+    my: 'ကျန်ရှိသော Content များ',
+    en: 'Remaining Contents',
+  },
+  'Unlimited Contents': {
+    my: 'အကန့်အသတ်မရှိ Contents',
+    en: 'Unlimited Contents',
+  },
+  'Account Expires': {
+    my: 'အကောင့်သက်တမ်းကုန်ရက်',
+    en: 'Account Expires',
   },
   'Recent Content': {
     my: 'လတ်တလော Content များ',
@@ -355,7 +561,7 @@ const translations = {
     en: 'Edit',
   },
   Delete: {
-    my: 'ဖျက်ရန်',
+    my: 'ဖျက်မည်',
     en: 'Delete',
   },
 
@@ -368,23 +574,47 @@ const translations = {
     my: 'ဒီ content ကို ဖျက်ချင်တာ သေချာပါသလား? ဒီလုပ်ဆောင်ချက်ကို ပြန်ပြင်လို့ မရပါဘူး။',
     en: 'Are you sure you want to delete this content? This action cannot be undone.',
   },
+  'Cancel Delete': {
+    my: 'မဖျက်တော့ပါ',
+    en: 'Cancel',
+  },
   Cancel: {
-    my: 'ပယ်ဖျက်ရန်',
+    my: 'မပြင်ဆင်တော့ပါ',
     en: 'Cancel',
   },
 
   // Edit Content Page
   'Edit Content': {
-    my: 'Content ပြင်ဆင်ရန်',
+    my: 'Content ပြင်ဆင်ခြင်း',
     en: 'Edit Content',
   },
   'Update your content details': {
-    my: 'သင့် content အသေးစိတ်များကို ပြင်ဆင်ပါ',
+    my: 'Content ၏ အသေးစိတ်များကို ပြင်ဆင်ပါ',
     en: 'Update your content details',
+  },
+  'Update your content details below': {
+    my: 'Content ၏ အသေးစိတ်များကို ပြင်ဆင်ပါ',
+    en: 'Update your content details below',
   },
   Content: {
     my: 'Content',
     en: 'Content',
+  },
+  Update: {
+    my: 'ပြင်ဆင်မည်',
+    en: 'Update',
+  },
+  'Updating...': {
+    my: 'ပြင်ဆင်နေသည်...',
+    en: 'Updating...',
+  },
+  Create: {
+    my: 'ဖန်တီးမည်',
+    en: 'Create',
+  },
+  'Creating...': {
+    my: 'ဖန်တီးနေသည်...',
+    en: 'Creating...',
   },
   'Update Content': {
     my: 'Content ပြင်ဆင်ရန်',
@@ -399,10 +629,6 @@ const translations = {
   'Copy Content': {
     my: 'Content ကူးယူရန်',
     en: 'Copy Content',
-  },
-  'Back to History': {
-    my: 'မှတ်တမ်းသို့ ပြန်သွားရန်',
-    en: 'Back to History',
   },
   'Writing Style': {
     my: 'စာရေးပုံစံ',
@@ -430,6 +656,10 @@ const translations = {
     my: 'Content ကို clipboard သို့ ကူးယူပြီးပါပြီ!',
     en: 'Content copied to clipboard!',
   },
+  'Failed to copy content': {
+    my: 'Content ကူးယူ၍ မရပါ',
+    en: 'Failed to copy content',
+  },
   'Error generating content. Please try again.': {
     my: 'Content ဖန်တီးရာတွင် အမှားရှိပါသည်။ ကျေးဇူးပြု၍ ထပ်မံကြိုးစားပါ။',
     en: 'Error generating content. Please try again.',
@@ -451,6 +681,10 @@ const translations = {
   'Welcome Back': {
     my: 'ပြန်လည်ကြိုဆိုပါတယ်',
     en: 'Welcome Back',
+  },
+  'Genius Autowriter': {
+    my: 'Genius Autowriter',
+    en: 'Genius Autowriter',
   },
   'Sign in to your Genius AutoWriter account': {
     my: 'သင့် Genius AutoWriter အကောင့်သို့ ဝင်ရောက်ပါ',
@@ -492,9 +726,10 @@ const translations = {
     my: 'သင့်စကားဝှက် ရိုက်ထည့်ပါ',
     en: 'Enter your password',
   },
-  'Enter your Gemini API Key': {
-    my: 'သင့် Gemini API Key ရိုက်ထည့်ပါ',
-    en: 'Enter your Gemini API Key',
+
+  'Enter Gemini API Key': {
+    my: 'Gemini API Key ရိုက်ထည့်ပါ',
+    en: 'Enter Gemini API Key',
   },
 
   // Word Count Options
@@ -503,26 +738,34 @@ const translations = {
     en: 'Word Count',
   },
   Short: {
-    my: 'တို',
+    my: 'အတို',
     en: 'Short',
   },
   Medium: {
-    my: 'လတ်',
+    my: 'အလယ်အလတ်',
     en: 'Medium',
   },
   Long: {
-    my: 'ရှည်',
+    my: 'အရှည်',
     en: 'Long',
   },
 
   // Generate Button States
   'Generate Content': {
-    my: 'Content ဖန်တီးရန်',
+    my: 'Content ဖန်တီးမည်',
     en: 'Generate Content',
   },
-  'Generating...': {
-    my: 'ဖန်တီးနေသည်...',
-    en: 'Generating...',
+  'Generating content...': {
+    my: 'Content ဖန်တီးနေသည်...',
+    en: 'Generating content...',
+  },
+  'Generating your content...': {
+    my: 'မိတ်ဆွေရဲ့ Content ကို ဖန်တီးနေပါတယ်...',
+    en: 'Generating your content...',
+  },
+  'Saving...': {
+    my: 'သိမ်းနေသည်...',
+    en: 'Saving...',
   },
 
   // Save Content Modal
@@ -534,77 +777,31 @@ const translations = {
     my: 'ဒီ content အတွက် ခေါင်းစဉ် ထည့်ပါ:',
     en: 'Enter a title for this content:',
   },
-  'OK': {
+  OK: {
     my: 'အိုကေ',
     en: 'OK',
   },
 
-  // Copywriting Models
-  'None (General)': {
-    my: 'မရွေးချယ် (ယေဘုယျ)',
-    en: 'None (General)',
-  },
-  'AIDA (Attention, Interest, Desire, Action)': {
-    my: 'AIDA (အာရုံစိုက်မှု၊ စိတ်ဝင်စားမှု၊ လိုချင်မှု၊ လုပ်ဆောင်မှု)',
-    en: 'AIDA (Attention, Interest, Desire, Action)',
-  },
-  'PAS (Problem, Agitate, Solution)': {
-    my: 'PAS (ပြဿနာ၊ နှိုးဆွမှု၊ ဖြေရှင်းချက်)',
-    en: 'PAS (Problem, Agitate, Solution)',
-  },
-  'FAB (Features, Advantages, Benefits)': {
-    my: 'FAB (လုပ်ဆောင်ချက်များ၊ အားသာချက်များ၊ အကျိုးကျေးဇူးများ)',
-    en: 'FAB (Features, Advantages, Benefits)',
-  },
-  '4Ps (Picture, Promise, Prove, Push)': {
-    my: '4Ps (ပုံရိပ်၊ ကတိ၊ သက်သေ၊ တွန်းအား)',
-    en: '4Ps (Picture, Promise, Prove, Push)',
-  },
-  'BAB (Before, After, Bridge)': {
-    my: 'BAB (မတိုင်မီ၊ ပြီးနောက်၊ တံတား)',
-    en: 'BAB (Before, After, Bridge)',
-  },
-
   // Writing Styles
-  'ဖော်ရွေသော (Friendly)': {
-    my: 'ဖော်ရွေသော',
-    en: 'Friendly',
+  'Promotional / Sales-Oriented Style': {
+    my: 'အရောင်းမြှင့်တင်ရေး ပုံစံ',
+    en: 'Promotional / Sales-Oriented Style',
   },
-  'တရားဝင် (Formal)': {
-    my: 'တရားဝင်',
-    en: 'Formal',
-  },
-  'ဟာသ (Humorous)': {
-    my: 'ဟာသ',
-    en: 'Humorous',
-  },
-  'ယုံကြည်မှုရှိသော (Confident)': {
-    my: 'ယုံကြည်မှုရှိသော',
-    en: 'Confident',
-  },
-  'စိတ်အားထက်သန်သော (Enthusiastic)': {
-    my: 'စိတ်အားထက်သန်သော',
-    en: 'Enthusiastic',
-  },
-  'ပရော်ဖက်ရှင်နယ် (Professional)': {
-    my: 'ပရော်ဖက်ရှင်နယ်',
-    en: 'Professional',
-  },
-  'စကားပြောပုံစံ (Conversational)': {
+  'Conversational / Interactive Style': {
     my: 'စကားပြောပုံစံ',
-    en: 'Conversational',
+    en: 'Conversational / Interactive Style',
   },
-  'ဇာတ်လမ်းပြောပုံစံ (Narrative)': {
-    my: 'ဇာတ်လမ်းပြောပုံစံ',
-    en: 'Narrative',
+  'Informational / Educational Style': {
+    my: 'ပညာပေး/အသိပေး ပုံစံ',
+    en: 'Informational / Educational Style',
   },
-  'အသိပေးရှင်းပြပုံစံ (Expository)': {
-    my: 'အသိပေးရှင်းပြပုံစံ',
-    en: 'Expository',
+  'Storytelling / Inspirational Style': {
+    my: 'ဇာတ်လမ်းပြောပြခြင်း ပုံစံ',
+    en: 'Storytelling / Inspirational Style',
   },
-  'စည်းရုံးဆွဲဆောင်ပုံစံ (Persuasive)': {
-    my: 'စည်းရုံးဆွဲဆောင်ပုံစံ',
-    en: 'Persuasive',
+  'Casual / Humorous Style': {
+    my: 'ပေါ့ပေါ့ပါးပါး ပုံစံ',
+    en: 'Casual / Humorous Style',
   },
 
   // Footer Text
@@ -622,24 +819,244 @@ const translations = {
     my: 'Admin panel သို့ ဝင်ရောက်ပါ',
     en: 'Sign in to admin panel',
   },
+
+  // Voice Generator Specific
+  'Voice Content Generator': {
+    my: 'အသံဖြင့် Content ဖန်တီးခြင်း',
+    en: 'Voice Content Generator',
+  },
+  'Generator With Voice': {
+    my: 'အသံဖြင့် ဖန်တီးခြင်း',
+    en: 'Generator With Voice',
+  },
+  'Voice Input': {
+    my: 'အသံထည့်သွင်းမှု',
+    en: 'Voice Input',
+  },
+  'Create content using voice input and images': {
+    my: 'အသံနဲ့ ပုံတွေ သုံးပြီး content ဖန်တီးပါ',
+    en: 'Create content using voice input and images',
+  },
+  'Record your voice for content generation': {
+    my: 'အကြောင်းအရာ ဖန်တီးရန် သင့်အသံကို သွင်းပါ',
+    en: 'Record your voice for content generation',
+  },
+  'Start Recording': {
+    my: 'အသံသွင်းချင်း စတင်ပါ',
+    en: 'Start Recording',
+  },
+  'Stop Recording': {
+    my: 'အသံသွင်းခြင်း ရပ်ပါ',
+    en: 'Stop Recording',
+  },
+  'Recording...': {
+    my: 'အသံသွင်းနေသည်...',
+    en: 'Recording...',
+  },
+  'Voice recording saved successfully!': {
+    my: 'အသံသွင်းခြင်းကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ!',
+    en: 'Voice recording saved successfully!',
+  },
+  'Voice recording saved successfully! Ready for content generation.': {
+    my: 'အသံသွင်းခြင်းကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ! Content ဖန်တီးရန် အဆင်သင့်ဖြစ်ပါပြီ။',
+    en: 'Voice recording saved successfully! Ready for content generation.',
+  },
+  'Image (Optional)': {
+    my: 'ပုံ (မဖြစ်မနေ မလိုအပ်ပါ)',
+    en: 'Image (Optional)',
+  },
+  'Upload Image': {
+    my: 'ပုံတင်ရန်',
+    en: 'Upload Image',
+  },
+  'Take Photo': {
+    my: 'ဓာတ်ပုံရိုက်ရန်',
+    en: 'Take Photo',
+  },
+  'Open Camera': {
+    my: 'ကင်မရာဖွင့်ရန်',
+    en: 'Open Camera',
+  },
+  'Capture Photo': {
+    my: 'ဓာတ်ပုံရိုက်ရန်',
+    en: 'Capture Photo',
+  },
+  Cancel: {
+    my: 'မပြင်ဆင်တော့ပါ',
+    en: 'Cancel',
+  },
+  Voice: {
+    my: 'အသံ',
+    en: 'Voice',
+  },
+  'Generate Content': {
+    my: 'Content ဖန်တီးမည်',
+    en: 'Generate Content',
+  },
+  'Save Content': {
+    my: 'Content သိမ်းဆည်းရန်',
+    en: 'Save Content',
+  },
+  'Recent Content': {
+    my: 'လတ်တလော Content များ',
+    en: 'Recent Content',
+  },
+  'No content created yet. Generate your first content above!': {
+    my: 'Content မရှိသေးပါ။ အပေါ်မှာ သင့်ရဲ့ ပထမ Content ကို ဖန်တီးပါ!',
+    en: 'No content created yet. Generate your first content above!',
+  },
+  'Output Language': {
+    my: 'ထွက်လာမည့် ဘာသာစကား',
+    en: 'Output Language',
+  },
+  'Word Count': {
+    my: 'စာလုံးအရေအတွက်',
+    en: 'Word Count',
+  },
+  Short: {
+    my: 'အတို',
+    en: 'Short',
+  },
+  Medium: {
+    my: 'အလယ်အလတ်',
+    en: 'Medium',
+  },
+  Long: {
+    my: 'အရှည်',
+    en: 'Long',
+  },
+  'Generated Content:': {
+    my: 'ဖန်တီးထားသော Content:',
+    en: 'Generated Content:',
+  },
+  'View My Contents': {
+    my: 'ကျွန်ုပ်၏ Content များကြည့်ရန်',
+    en: 'View My Contents',
+  },
+  'View All': {
+    my: 'အားလုံးကြည့်ရန်',
+    en: 'View All',
+  },
+
+  // Contents Dashboard
+  'Contents Dashboard': {
+    my: 'Content စာမျက်နှာများ',
+    en: 'Contents Dashboard',
+  },
+  'Content Management': {
+    my: 'Content စီမံခန့်ခွဲခြင်း',
+    en: 'Content Management',
+  },
+  'Total Contents': {
+    my: 'အကြောင်းအရာစုစုပေါင်း',
+    en: 'Total Contents',
+  },
+  Published: {
+    my: 'တင်ပြီးသော',
+    en: 'Published',
+  },
+  Drafts: {
+    my: 'မတင်ရသေးသော',
+    en: 'Drafts',
+  },
+  Posted: {
+    my: 'တင်ပြီး',
+    en: 'Published',
+  },
+  'Not Posted': {
+    my: 'မတင်ရသေး',
+    en: 'Draft',
+  },
+  'Search contents...': {
+    my: 'Content များကို ရှာဖွေပါ...',
+    en: 'Search contents...',
+  },
+  'All Contents': {
+    my: 'Content အားလုံး',
+    en: 'All Contents',
+  },
+  Showing: {
+    my: 'ပြသနေသည်',
+    en: 'Showing',
+  },
+  of: {
+    my: 'မှ',
+    en: 'of',
+  },
+  'Manage your content library': {
+    my: 'သင်၏ Content များကို စီမံခန့်ခွဲပါ',
+    en: 'Manage your content library',
+  },
+  'No contents found': {
+    my: 'အကြောင်းအရာရှာမတွေ့ပါ',
+    en: 'No contents found',
+  },
+  'No contents match your search': {
+    my: 'သင်ရှာသော အကြောင်းအရာနှင့် ကိုက်ညီမှုမရှိပါ',
+    en: 'No contents match your search',
+  },
+  'Are you sure you want to delete this content?': {
+    my: 'ဤ Content ကို ဖျက်လိုသည်မှာ သေချာပါသလား?',
+    en: 'Are you sure you want to delete this content?',
+  },
+  'Delete Content': {
+    my: 'Content ဖျက်ရန်',
+    en: 'Delete Content',
+  },
 };
 
 // Get current language from localStorage or default to Myanmar
 let currentLanguage = localStorage.getItem('language') || 'my';
 
+// Optimized cache refresh for language data (version 2.6)
+const LANGUAGE_VERSION = '2.6';
+const storedVersion = localStorage.getItem('language-version');
+if (storedVersion !== LANGUAGE_VERSION) {
+  // Batch localStorage operations for better performance
+  try {
+    localStorage.removeItem('language');
+    localStorage.setItem('language-version', LANGUAGE_VERSION);
+    currentLanguage = 'my'; // Reset to default
+  } catch (e) {
+    // Fallback if localStorage is not available
+    console.warn('localStorage not available, using default language');
+    currentLanguage = 'my';
+  }
+}
+
+// Function to get translation (defined early for immediate use)
+function getTranslation(key, lang = currentLanguage) {
+  if (translations[key] && translations[key][lang]) {
+    return translations[key][lang];
+  } else {
+    // If no translation found, return the key
+    return key;
+  }
+}
+
+// Export immediately for use in other scripts
+window.getTranslation = getTranslation;
+window.currentLanguage = currentLanguage;
+
 // Initialize language switcher
 document.addEventListener('DOMContentLoaded', function () {
   const languageSelector = document.getElementById('language-selector');
 
+  // Always apply language on page load from localStorage
+  applyLanguage(currentLanguage);
+
+  // Update window.currentLanguage for other scripts
+  window.currentLanguage = currentLanguage;
+
   if (languageSelector) {
     // Set initial language
     languageSelector.value = currentLanguage;
-    applyLanguage(currentLanguage);
 
     // Add change event listener
     languageSelector.addEventListener('change', function () {
       const selectedLanguage = this.value;
       currentLanguage = selectedLanguage;
+      window.currentLanguage = selectedLanguage; // Update global
       localStorage.setItem('language', selectedLanguage);
       applyLanguage(selectedLanguage);
     });
@@ -648,6 +1065,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Apply language to all translatable elements
 function applyLanguage(language) {
+  // Update global language variable first
+  currentLanguage = language;
+  window.currentLanguage = language;
+
   // Update all elements with data-translate attribute
   const translatableElements = document.querySelectorAll('[data-translate]');
 
@@ -658,6 +1079,9 @@ function applyLanguage(language) {
         element.value = translations[key][language];
       } else if (element.tagName === 'INPUT' && element.hasAttribute('placeholder')) {
         element.placeholder = translations[key][language];
+      } else if (element.tagName === 'OPTION') {
+        // Handle option elements
+        element.textContent = translations[key][language];
       } else {
         element.textContent = translations[key][language];
       }
@@ -679,32 +1103,118 @@ function applyLanguage(language) {
     const key = element.getAttribute('data-translate-placeholder');
     if (translations[key] && translations[key][language]) {
       element.placeholder = translations[key][language];
+    } else {
+      // If no translation found, use the key as placeholder
+      element.placeholder = key;
     }
   });
 
   // Update document language attribute
   document.documentElement.lang = language === 'my' ? 'my' : 'en';
 
-  // Update dynamically created reference link placeholders
-  const referenceLinkInputs = document.querySelectorAll(
-    'input[data-placeholder="Website URL ထည့်ပါ"]'
-  );
-  referenceLinkInputs.forEach(input => {
-    const key = input.getAttribute('data-placeholder');
-    if (translations[key] && translations[key][language]) {
-      input.placeholder = translations[key][language];
-    }
-  });
+  // Update custom select dropdowns
+  updateCustomSelects(language);
+
+  // Update generate button if it exists and is not in loading state
+  updateGenerateButton(language);
 }
 
-// Function to get translation
-function getTranslation(key, lang = currentLanguage) {
-  if (translations[key] && translations[key][lang]) {
-    return translations[key][lang];
+// Function to update custom select dropdowns
+function updateCustomSelects(language) {
+  // Update all custom select instances
+  if (typeof customSelectInstances !== 'undefined' && customSelectInstances.length > 0) {
+    customSelectInstances.forEach(instance => {
+      // Use the instance's updateTranslations method if available
+      if (typeof instance.updateTranslations === 'function') {
+        instance.updateTranslations(language);
+      } else {
+        // Fallback to direct update
+        const selectedOption = instance.options[instance.selectedIndex];
+        const translateKey = selectedOption.getAttribute('data-translate');
+        if (translateKey && translations[translateKey] && translations[translateKey][language]) {
+          instance.selectedValue.textContent = translations[translateKey][language];
+        }
+
+        // Update all dropdown options
+        instance.dropdown.querySelectorAll('.custom-select-option').forEach(optionElement => {
+          const key = optionElement.getAttribute('data-translate');
+          if (key && translations[key] && translations[key][language]) {
+            optionElement.textContent = translations[key][language];
+          }
+        });
+      }
+    });
   }
-  return key; // Return original key if translation not found
 }
 
-// Export for use in other scripts
-window.getTranslation = getTranslation;
-window.currentLanguage = currentLanguage;
+// Function to update generate button text
+function updateGenerateButton(language) {
+  // Update main dashboard generate button
+  const generateBtn = document.getElementById('generate-btn');
+  const generateBtnText = document.getElementById('generate-btn-text');
+
+  if (generateBtn && generateBtnText) {
+    // Check if button is currently disabled (generating)
+    const isGenerating = generateBtn.disabled;
+
+    if (isGenerating) {
+      // Update to "Generating..." in the selected language
+      const generatingText =
+        translations['Generating...'] && translations['Generating...'][language]
+          ? translations['Generating...'][language]
+          : 'Generating...';
+      generateBtnText.textContent = generatingText;
+    } else {
+      // Update to "Generate Content" in the selected language
+      const generateText =
+        translations['Generate Content'] && translations['Generate Content'][language]
+          ? translations['Generate Content'][language]
+          : 'Generate Content';
+      generateBtnText.textContent = generateText;
+    }
+  }
+
+  // Update voice generator button
+  const voiceGenerateBtn = document.getElementById('generate-voice-content-btn');
+  const voiceGenerateBtnText = document.getElementById('generate-voice-btn-text');
+
+  if (voiceGenerateBtn && voiceGenerateBtnText) {
+    // Check if button is currently disabled (generating)
+    const isGenerating = voiceGenerateBtn.disabled;
+
+    if (isGenerating) {
+      // Update to "Generating..." in the selected language
+      const generatingText =
+        translations['Generating...'] && translations['Generating...'][language]
+          ? translations['Generating...'][language]
+          : 'Generating...';
+      voiceGenerateBtnText.textContent = generatingText;
+    } else {
+      // Update to "Generate Content" in the selected language
+      const generateText =
+        translations['Generate Content'] && translations['Generate Content'][language]
+          ? translations['Generate Content'][language]
+          : 'Generate Content';
+      voiceGenerateBtnText.textContent = generateText;
+    }
+  }
+}
+
+// Export applyLanguage and translations for use in other scripts
+window.applyLanguage = applyLanguage;
+window.translations = translations;
+
+// Helper function to change language and notify all components
+window.changeLanguage = function(language) {
+  // Save to localStorage
+  localStorage.setItem('language', language);
+  
+  // Apply language changes
+  applyLanguage(language);
+  
+  // Dispatch custom event to notify other components (like expiration countdown)
+  window.dispatchEvent(new CustomEvent('languageChanged', {
+    detail: { language: language }
+  }));
+};
+

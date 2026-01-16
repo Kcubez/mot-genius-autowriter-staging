@@ -50,6 +50,12 @@ function processMessage(category, message) {
         window.notify.error(message, '❌ Account Deactivated');
       } else if (message.includes('Username already exists')) {
         window.notify.error(message, '👤 User Creation Failed');
+      } else if (message.includes('trial account has expired')) {
+        window.notify.show(message, 'error', '⏰ Trial Expired', 8000);
+      } else if (message.includes('subscription has expired')) {
+        window.notify.show(message, 'error', '📅 Subscription Expired', 8000);
+      } else if (message.includes('account has expired')) {
+        window.notify.show(message, 'error', '⏰ Account Expired', 8000);
       } else {
         window.notify.error(message, '❌ Error');
       }

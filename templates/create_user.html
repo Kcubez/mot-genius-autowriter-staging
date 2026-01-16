@@ -8,7 +8,7 @@ content %}
     >
       <div class="mb-6">
         <h1 class="text-3xl font-bold text-white">Create New User</h1>
-        <p class="text-gray-300 mt-2">Add a new user to the system</p>
+        <p class="text-gray-300 mt-2">Add a new trial or normal user to the system</p>
       </div>
 
       <form method="POST" class="create-user-form space-y-6">
@@ -29,7 +29,7 @@ content %}
         <div class="form-field">
           {{ form.password.label(class="block text-sm font-medium text-white mb-2") }}
           <div class="password-input-container">
-            {{ form.password(class="password-input", id="password", onkeydown="return preventSpaceKey(event)", oninput="cleanInput(event)", onpaste="setTimeout(() => cleanInput(event), 10)", autocomplete="off") }}
+            {{ form.password(class="password-input", id="password", placeholder="Enter password (min 6 characters)", onkeydown="return preventSpaceKey(event)", oninput="cleanInput(event)", onpaste="setTimeout(() => cleanInput(event), 10)", autocomplete="off") }}
             <button type="button" class="password-toggle-btn" aria-label="Show password">
               <!-- Eye Open Icon -->
               <svg class="eye-open" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,16 +69,84 @@ content %}
           </p>
         </div>
 
-        <div>
-          {{ form.is_admin.label(class="block text-sm font-medium text-white mb-2") }} {{
-          form.is_admin(class="w-full p-3 border border-gray-300 rounded-md focus:ring-red-500
-          focus:border-red-500 text-black bg-white") }} {% if form.is_admin.errors %}
+        <div id="user_type_field">
+          {{ form.user_type.label(class="block text-sm font-medium text-white mb-2") }} {{
+          form.user_type(class="w-full p-3 border border-gray-300 rounded-md focus:ring-red-500
+          focus:border-red-500 text-black bg-white", id="user_type") }} {% if form.user_type.errors %}
           <div class="text-red-500 text-sm mt-1">
-            {% for error in form.is_admin.errors %}
+            {% for error in form.user_type.errors %}
             <p>{{ error }}</p>
             {% endfor %}
           </div>
           {% endif %}
+        </div>
+
+        <div id="expiration_date_field" style="display: none;">
+          <label class="block text-sm font-medium text-white mb-2">Expiration Date</label>
+          
+          <!-- Quick Duration Buttons -->
+          <div class="mb-4" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem;">
+            <button type="button" onclick="setQuickDuration(7)" style="padding: 0.625rem 1rem; font-size: 0.875rem; font-weight: 500; background-color: #374151; color: white; border-radius: 0.5rem; border: none; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#4B5563'" onmouseout="this.style.backgroundColor='#374151'">
+              7 Days
+            </button>
+            <button type="button" onclick="setQuickDuration(30)" style="padding: 0.625rem 1rem; font-size: 0.875rem; font-weight: 500; background-color: #374151; color: white; border-radius: 0.5rem; border: none; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#4B5563'" onmouseout="this.style.backgroundColor='#374151'">
+              1 Month
+            </button>
+            <button type="button" onclick="setQuickDuration(90)" style="padding: 0.625rem 1rem; font-size: 0.875rem; font-weight: 500; background-color: #374151; color: white; border-radius: 0.5rem; border: none; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#4B5563'" onmouseout="this.style.backgroundColor='#374151'">
+              3 Months
+            </button>
+            <button type="button" onclick="setQuickDuration(180)" style="padding: 0.625rem 1rem; font-size: 0.875rem; font-weight: 500; background-color: #374151; color: white; border-radius: 0.5rem; border: none; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#4B5563'" onmouseout="this.style.backgroundColor='#374151'">
+              6 Months
+            </button>
+            <button type="button" onclick="setQuickDuration(365)" style="padding: 0.625rem 1rem; font-size: 0.875rem; font-weight: 500; background-color: #374151; color: white; border-radius: 0.5rem; border: none; cursor: pointer; transition: all 0.2s; grid-column: span 2;" onmouseover="this.style.backgroundColor='#4B5563'" onmouseout="this.style.backgroundColor='#374151'">
+              1 Year
+            </button>
+          </div>
+          
+          <style>
+            @media (min-width: 640px) {
+              #expiration_date_field > div:first-of-type {
+                grid-template-columns: repeat(3, 1fr) !important;
+              }
+              #expiration_date_field > div:first-of-type button:last-child {
+                grid-column: span 1 !important;
+              }
+            }
+            @media (min-width: 768px) {
+              #expiration_date_field > div:first-of-type {
+                grid-template-columns: repeat(3, 1fr) !important;
+              }
+              #expiration_date_field > div:first-of-type button:nth-child(1),
+              #expiration_date_field > div:first-of-type button:nth-child(2) {
+                grid-column: span 1 !important;
+              }
+            }
+            @media (min-width: 1024px) {
+              #expiration_date_field > div:first-of-type {
+                grid-template-columns: repeat(6, 1fr) !important;
+              }
+            }
+          </style>
+          
+          <!-- Date and Time Picker -->
+          {{ form.expiration_date(class="w-full p-3 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500 text-black bg-white", id="expiration_date", type="datetime-local") }}
+          
+          {% if form.expiration_date.errors %}
+          <div class="text-red-500 text-sm mt-1">
+            {% for error in form.expiration_date.errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+          
+          <!-- Preview -->
+          <div id="expiry_preview" class="mt-2 text-sm text-gray-300">
+            <span class="font-medium">Will expire on:</span> <span id="expiry_date_display" class="text-red-400">-</span>
+          </div>
+          
+          <p class="text-xs text-gray-400 mt-1">
+            Required for Normal Users only. Select a future date.
+          </p>
         </div>
 
         <div class="flex space-x-4">
@@ -115,6 +183,114 @@ function cleanInput(event) {
   // Remove all spaces from the input value
   input.value = input.value.replace(/\s/g, '');
 }
+
+// Set minimum datetime to now
+function setMinDate() {
+  const dateInput = document.getElementById('expiration_date');
+  const now = new Date();
+  // Format as YYYY-MM-DDTHH:MM for datetime-local
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  dateInput.min = `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+// Quick duration button handler
+function setQuickDuration(days) {
+  const dateInput = document.getElementById('expiration_date');
+  const expiryDate = new Date();
+  
+  // Add days
+  if (days > 0) {
+    expiryDate.setDate(expiryDate.getDate() + days);
+  }
+  
+  // Set time to end of day (23:59)
+  expiryDate.setHours(23, 59, 0, 0);
+  
+  // Format datetime as YYYY-MM-DDTHH:MM for datetime-local
+  const year = expiryDate.getFullYear();
+  const month = String(expiryDate.getMonth() + 1).padStart(2, '0');
+  const day = String(expiryDate.getDate()).padStart(2, '0');
+  const hours = String(expiryDate.getHours()).padStart(2, '0');
+  const minutes = String(expiryDate.getMinutes()).padStart(2, '0');
+  
+  dateInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+  
+  // Update preview
+  updatePreview();
+}
+
+// Update expiry preview
+function updatePreview() {
+  const dateInput = document.getElementById('expiration_date');
+  const preview = document.getElementById('expiry_date_display');
+  
+  if (dateInput.value) {
+    const selected = new Date(dateInput.value);
+    const now = new Date();
+    
+    // Validate datetime is not in the past
+    if (selected < now) {
+      preview.textContent = '⚠️ Cannot select past date/time';
+      preview.className = 'text-red-500 font-medium';
+      return;
+    }
+    
+    // Format date and time
+    const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+    const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: true };
+    const formattedDate = selected.toLocaleDateString('en-US', dateOptions);
+    const formattedTime = selected.toLocaleTimeString('en-US', timeOptions);
+    
+    const diffTime = selected - now;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    
+    let durationText = '';
+    if (diffDays > 0) {
+      durationText = `${diffDays} day${diffDays > 1 ? 's' : ''}`;
+      if (diffHours > 0) {
+        durationText += ` ${diffHours} hour${diffHours > 1 ? 's' : ''}`;
+      }
+    } else {
+      const totalHours = Math.floor(diffTime / (1000 * 60 * 60));
+      durationText = `${totalHours} hour${totalHours > 1 ? 's' : ''}`;
+    }
+    
+    preview.textContent = `${formattedDate} at ${formattedTime} (${durationText} from now)`;
+    preview.className = 'text-red-400 font-medium';
+  } else {
+    preview.textContent = '-';
+    preview.className = 'text-red-400';
+  }
+}
+// Show/hide fields based on user type selection
+function toggleFields() {
+  const userType = document.getElementById('user_type').value;
+  const expirationField = document.getElementById('expiration_date_field');
+  
+  // Show expiration date only for normal users
+  if (userType === 'normal') {
+    expirationField.style.display = 'block';
+    setMinDate();
+  } else {
+    expirationField.style.display = 'none';
+  }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+  setMinDate();
+  toggleFields();
+  
+  // Add event listeners
+  document.getElementById('user_type').addEventListener('change', toggleFields);
+  document.getElementById('expiration_date').addEventListener('change', updatePreview);
+  document.getElementById('expiration_date').addEventListener('input', updatePreview);
+});
 </script>
 
 {% endblock %}

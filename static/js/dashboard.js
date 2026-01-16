@@ -1,186 +1,265 @@
 // Content Manager - Dashboard JavaScript
 
+// Loading Animation Functions
+const LOADING_CIRCUMFERENCE = 2 * Math.PI * 54;
+const DEFAULT_LOADING_INTERVAL = 240;
+const SHORT_LOADING_INTERVAL = 150;
+let loadingProgressInterval = null;
+let loadingProgressValue = 0;
+
+function updateLoadingProgress(value) {
+  const clampedValue = Math.max(0, Math.min(100, value));
+  const progressText = document.getElementById('loading-progress-text');
+  const progressRing = document.getElementById('loading-progress-ring');
+
+  if (progressText) {
+    progressText.textContent = `${Math.round(clampedValue)}%`;
+  }
+
+  if (progressRing) {
+    const offset = LOADING_CIRCUMFERENCE - (clampedValue / 100) * LOADING_CIRCUMFERENCE;
+    progressRing.style.strokeDashoffset = `${offset}`;
+  }
+}
+
+function setLoadingMessage(message) {
+  const messageElement = document.getElementById('loading-message-text');
+  if (messageElement && typeof message === 'string' && message.trim()) {
+    messageElement.textContent = message;
+  }
+}
+
+function startLoadingProgress(message, options = {}) {
+  const overlay = document.getElementById('loading-overlay');
+  if (!overlay) return;
+
+  if (loadingProgressInterval) {
+    clearInterval(loadingProgressInterval);
+  }
+
+  loadingProgressValue = 0;
+  updateLoadingProgress(loadingProgressValue);
+  setLoadingMessage(message);
+
+  overlay.style.display = 'flex';
+
+  const intervalMs = options.intervalMs || DEFAULT_LOADING_INTERVAL;
+  loadingProgressInterval = setInterval(() => {
+    if (loadingProgressValue >= 99) {
+      clearInterval(loadingProgressInterval);
+      loadingProgressInterval = null;
+      loadingProgressValue = 99;
+      return;
+    }
+
+    loadingProgressValue += 1;
+    updateLoadingProgress(loadingProgressValue);
+  }, intervalMs);
+}
+
+function stopLoadingProgress() {
+  const overlay = document.getElementById('loading-overlay');
+
+  if (loadingProgressInterval) {
+    clearInterval(loadingProgressInterval);
+    loadingProgressInterval = null;
+  }
+
+  loadingProgressValue = 0;
+  updateLoadingProgress(loadingProgressValue);
+
+  if (overlay) {
+    overlay.style.display = 'none';
+  }
+}
+
+function showLoadingAnimation(message, options) {
+  startLoadingProgress(message, options);
+}
+
+function hideLoadingAnimation() {
+  stopLoadingProgress();
+}
+
 // Dashboard specific functionality
 document.addEventListener('DOMContentLoaded', function () {
   const generateBtn = document.getElementById('generate-btn');
   const generateSpinner = document.getElementById('generate-spinner');
+  const generateWandIcon = document.getElementById('generate-wand-icon');
   const generateBtnText = document.getElementById('generate-btn-text');
   const contentArea = document.getElementById('content-area');
+  const generatedContentDisplay = document.getElementById('generated-content-display');
   const saveContentBtn = document.getElementById('save-content-btn');
+  const copyContentBtn = document.getElementById('copy-content-btn');
   const wordCountSelect = document.getElementById('word-count');
+  const apiKeyBtn = document.getElementById('change-api-key-btn');
+  const apiKeyModal = document.getElementById('api-key-modal');
+  const apiKeyInput = document.getElementById('api-key-input');
+  const apiKeyCancelBtn = document.getElementById('api-key-cancel-btn');
+  const apiKeySubmitBtn = document.getElementById('api-key-submit-btn');
+  const apiKeyCloseBtn = document.getElementById('close-api-key-modal');
 
   if (!generateBtn || !contentArea || !saveContentBtn) {
     return; // Not on dashboard page
   }
 
-  // Word count select is ready to use - no additional functionality needed
-  // Writing style dropdown functionality
-  const writingStyleDropdown = document.getElementById('writing-style-dropdown');
-  const writingStyleOptions = document.getElementById('writing-style-options');
-  const writingStyleDisplay = document.getElementById('writing-style-display');
-  const writingStyleCheckboxes = document.querySelectorAll('.writing-style-checkbox');
+  // API key modal handling
+  if (
+    apiKeyBtn &&
+    apiKeyModal &&
+    apiKeyInput &&
+    apiKeyCancelBtn &&
+    apiKeySubmitBtn &&
+    apiKeyCloseBtn
+  ) {
+    const toggleBodyScroll = locked => {
+      document.body.style.overflow = locked ? 'hidden' : '';
+    };
 
-  if (writingStyleDropdown && writingStyleOptions) {
-    // Toggle dropdown
-    writingStyleDropdown.addEventListener('click', function (e) {
-      e.stopPropagation();
-      writingStyleOptions.classList.toggle('hidden');
+    const openApiKeyModal = () => {
+      apiKeyInput.value = apiKeyBtn.dataset.currentKey || '';
+      apiKeyModal.classList.add('active');
+      apiKeyModal.setAttribute('aria-hidden', 'false');
+      toggleBodyScroll(true);
+      requestAnimationFrame(() => apiKeyInput.focus());
+    };
+
+    const closeApiKeyModal = () => {
+      apiKeyModal.classList.remove('active');
+      apiKeyModal.setAttribute('aria-hidden', 'true');
+      toggleBodyScroll(false);
+      apiKeyInput.value = '';
+    };
+
+    const handleEscClose = event => {
+      if (event.key === 'Escape' && apiKeyModal.classList.contains('active')) {
+        closeApiKeyModal();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscClose);
+    apiKeyBtn.addEventListener('click', openApiKeyModal);
+    apiKeyCancelBtn.addEventListener('click', closeApiKeyModal);
+    apiKeyCloseBtn.addEventListener('click', closeApiKeyModal);
+    apiKeyModal.addEventListener('click', event => {
+      if (event.target === apiKeyModal) {
+        closeApiKeyModal();
+      }
     });
 
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function () {
-      writingStyleOptions.classList.add('hidden');
-    });
+    const updateApiKeyButtonLabel = () => {
+      const defaultText = apiKeySubmitBtn.dataset.defaultText || 'Change';
+      const myanmarText = apiKeySubmitBtn.dataset.myanmarText || defaultText;
+      const currentLang = window.currentLanguage || 'en';
+      apiKeySubmitBtn.textContent = currentLang === 'my' ? myanmarText : defaultText;
+    };
 
-    // Prevent dropdown from closing when clicking inside options
-    writingStyleOptions.addEventListener('click', function (e) {
-      e.stopPropagation();
-    });
+    updateApiKeyButtonLabel();
 
-    // Handle checkbox changes
-    writingStyleCheckboxes.forEach(checkbox => {
-      checkbox.addEventListener('change', function () {
-        // Update display text and manage disabled state
-        updateWritingStyleDisplay();
-        updateCheckboxStates();
-      });
-    });
+    document.addEventListener('languagechange', updateApiKeyButtonLabel);
 
-    // Function to update display text
-    function updateWritingStyleDisplay() {
-      const checkedBoxes = document.querySelectorAll('.writing-style-checkbox:checked');
-      if (checkedBoxes.length === 0) {
-        writingStyleDisplay.textContent = 'ရွေးချယ်ပါ...';
-        writingStyleDisplay.className = 'text-gray-500';
-      } else {
-        const selectedTexts = Array.from(checkedBoxes).map(checkbox => {
-          return checkbox.parentElement.querySelector('span').textContent;
+    apiKeySubmitBtn.addEventListener('click', async () => {
+      const newKey = apiKeyInput.value.trim();
+      if (!newKey) {
+        notify.warning('Please enter a Gemini API key.', 'Missing API Key');
+        apiKeyInput.focus();
+        return;
+      }
+
+      try {
+        apiKeySubmitBtn.disabled = true;
+        const savingText = window.getTranslation ? window.getTranslation('Saving...') : 'Saving...';
+        apiKeySubmitBtn.textContent = savingText;
+
+        const response = await fetch('/api/update-api-key', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ apiKey: newKey }),
         });
-        writingStyleDisplay.textContent = selectedTexts.join(', ');
-        writingStyleDisplay.className = 'text-gray-900';
-      }
-    }
 
-    // Function to manage checkbox disabled states
-    function updateCheckboxStates() {
-      const checkedBoxes = document.querySelectorAll('.writing-style-checkbox:checked');
-      const isMaxSelected = checkedBoxes.length >= 3;
+        const data = await response.json();
 
-      writingStyleCheckboxes.forEach(checkbox => {
-        const label = checkbox.parentElement;
-
-        if (!checkbox.checked && isMaxSelected) {
-          // Disable unchecked checkboxes when 3 are selected
-          checkbox.disabled = true;
-          label.classList.add('opacity-50', 'cursor-not-allowed');
-          label.classList.remove('cursor-pointer', 'hover:bg-gray-50');
-        } else {
-          // Enable all checkboxes when less than 3 are selected
-          checkbox.disabled = false;
-          label.classList.remove('opacity-50', 'cursor-not-allowed');
-          label.classList.add('cursor-pointer');
-          if (!checkbox.checked) {
-            label.classList.add('hover:bg-gray-50');
-          }
+        if (!response.ok || !data.success) {
+          const errorMessage = data.error || 'Failed to update API key.';
+          notify.error(errorMessage, 'Update Failed');
+          return;
         }
-      });
-    }
+
+        apiKeyBtn.dataset.currentKey = newKey;
+        closeApiKeyModal();
+        notify.success('API key updated successfully!', 'Success');
+      } catch (error) {
+        console.error('Failed to update API key:', error);
+        notify.error('Could not update API key. Please try again.', 'Network Error');
+      } finally {
+        updateApiKeyButtonLabel();
+        apiKeySubmitBtn.disabled = false;
+      }
+    });
   }
 
-  // Reference Links functionality
-  const addReferenceLinkBtn = document.getElementById('add-reference-link');
-  const referenceLinksContainer = document.getElementById('reference-links-container');
-  let referenceLinkCounter = 0;
+  // Word count select is ready to use - no additional functionality needed
+  // Writing style select is ready to use - no additional functionality needed
 
-  if (addReferenceLinkBtn && referenceLinksContainer) {
-    // Add initial reference link field
-    addReferenceLink();
+  // Reference Links functionality removed
 
-    addReferenceLinkBtn.addEventListener('click', function () {
-      addReferenceLink();
+  // Emoji Toggle functionality (simplified for new toggle switch)
+  const emojiToggle = document.getElementById('emoji-toggle');
+  // No additional JS needed - CSS handles the toggle visual state
+
+  // Image Preview functionality
+  const imageUpload = document.getElementById('image-upload');
+  const imagePreviewContainer = document.getElementById('image-preview-container');
+  const imagePreview = document.getElementById('image-preview');
+  const removeImageBtn = document.getElementById('remove-image-btn');
+  const imageUploadArea = document.getElementById('image-upload-area');
+
+  if (imageUpload && imagePreview && imagePreviewContainer && removeImageBtn) {
+    // Handle image selection
+    imageUpload.addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (file) {
+        // Validate file type
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+          notify.error(
+            'JPG, PNG, သို့မဟုတ် WebP ပုံဖိုင်တွေပဲ upload လုပ်နိုင်ပါတယ်။',
+            'Invalid File Type'
+          );
+          imageUpload.value = '';
+          return;
+        }
+
+        // Validate file size (4MB)
+        const maxSize = 4 * 1024 * 1024;
+        if (file.size > maxSize) {
+          notify.error(
+            'ပုံဖိုင်က အရမ်းကြီးလွန်းပါတယ်။ 4MB ထက်နည်းတဲ့ ပုံကို သုံးပါ။',
+            'File Too Large'
+          );
+          imageUpload.value = '';
+          return;
+        }
+
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          imagePreview.src = e.target.result;
+          imagePreviewContainer.style.display = 'block';
+          imageUploadArea.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+      }
     });
 
-    function addReferenceLink() {
-      referenceLinkCounter++;
-      const linkDiv = document.createElement('div');
-      linkDiv.className = 'flex items-center space-x-2 reference-link-item';
-      linkDiv.innerHTML = `
-        <input
-          type="url"
-          name="reference-link-${referenceLinkCounter}"
-          class="flex-1 p-3 border border-gray-300 rounded-lg bg-white text-black placeholder-gray-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all duration-200"
-          placeholder="Website URL ထည့်ပါ"
-          data-placeholder="Website URL ထည့်ပါ"
-        />
-        <button
-          type="button"
-          class="remove-reference-link bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg transition-all duration-200"
-          title="Remove Link"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-          </svg>
-        </button>
-      `;
-
-      // Add remove functionality
-      const removeBtn = linkDiv.querySelector('.remove-reference-link');
-      removeBtn.addEventListener('click', function () {
-        linkDiv.remove();
-        // If no links left, add one back
-        if (referenceLinksContainer.children.length === 0) {
-          addReferenceLink();
-        }
-      });
-
-      referenceLinksContainer.appendChild(linkDiv);
-
-      // Apply current language to the new input
-      if (window.getTranslation && window.currentLanguage) {
-        const input = linkDiv.querySelector('input[data-placeholder]');
-        if (input) {
-          const key = input.getAttribute('data-placeholder');
-          const translation = window.getTranslation(key, window.currentLanguage);
-          if (translation !== key) {
-            input.placeholder = translation;
-          }
-        }
-      }
-    }
-
-    // Function to get all reference links
-    function getReferenceLinks() {
-      const links = [];
-      const linkInputs = referenceLinksContainer.querySelectorAll('input[type="url"]');
-      linkInputs.forEach(input => {
-        if (input.value.trim()) {
-          links.push(input.value.trim());
-        }
-      });
-      return links;
-    }
-
-    // Make getReferenceLinks available globally for the generate function
-    window.getReferenceLinks = getReferenceLinks;
-  }
-
-  // Emoji Toggle functionality
-  const emojiToggle = document.getElementById('emoji-toggle');
-  const emojiStatus = document.getElementById('emoji-status');
-
-  if (emojiToggle && emojiStatus) {
-    emojiToggle.addEventListener('change', function () {
-      if (this.checked) {
-        const onText = window.getTranslation ? window.getTranslation('ON') : 'ON';
-        emojiStatus.textContent = onText;
-        emojiStatus.className = 'ml-3 text-sm font-medium text-green-400';
-        emojiStatus.setAttribute('data-translate', 'ON');
-      } else {
-        const offText = window.getTranslation ? window.getTranslation('OFF') : 'OFF';
-        emojiStatus.textContent = offText;
-        emojiStatus.className = 'ml-3 text-sm font-medium text-gray-400';
-        emojiStatus.setAttribute('data-translate', 'OFF');
-      }
+    // Handle remove image
+    removeImageBtn.addEventListener('click', function () {
+      imageUpload.value = '';
+      imagePreview.src = '';
+      imagePreviewContainer.style.display = 'none';
+      imageUploadArea.style.display = 'flex';
     });
   }
 
@@ -190,12 +269,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const prompt = document.getElementById('prompt').value;
     const purpose = document.getElementById('purpose').value;
 
-    // Get selected writing styles from checkboxes
-    const selectedStyles = [];
-    document.querySelectorAll('.writing-style-checkbox:checked').forEach(checkbox => {
-      selectedStyles.push(checkbox.value);
-    });
-    const writingStyle = selectedStyles.join(', ');
+    // Get selected writing style from select dropdown
+    const writingStyle = document.getElementById('writing-style').value;
 
     const audience = document.getElementById('audience').value;
     const keywords = document.getElementById('keywords').value;
@@ -205,8 +280,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!pageName.trim()) {
       notify.warning(
-        'Page Name ထည့်ပါ။ ဒါမှ content ကို generate လုပ်နိုင်မှာပါ။',
-        'Missing Page Name'
+        'Content ခေါင်းစဉ် ထည့်ပါ။ ဒါမှ content ကို generate လုပ်နိုင်မှာပါ။',
+        'Missing Content Title'
       );
       return;
     }
@@ -216,19 +291,84 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
+    if (!purpose || purpose.trim() === '') {
+      notify.warning(
+        'Purpose ရွေးချယ်ပါ။ ဒါမှ content ကို generate လုပ်နိုင်မှာပါ။',
+        'Missing Purpose'
+      );
+      return;
+    }
+
+    if (!audience.trim()) {
+      notify.warning(
+        'Audience ထည့်ပါ။ ဒါမှ content ကို generate လုပ်နိုင်မှာပါ။',
+        'Missing Audience'
+      );
+      return;
+    }
+
+    if (!writingStyle || writingStyle.trim() === '') {
+      notify.warning(
+        'Writing Style ရွေးချယ်ပါ။ ဒါမှ content ကို generate လုပ်နိုင်မှာပါ။',
+        'Missing Writing Style'
+      );
+      return;
+    }
+
+    const wordCount = document.getElementById('word-count').value;
+    if (!wordCount || wordCount.trim() === '') {
+      notify.warning(
+        'Content Length ရွေးချယ်ပါ။ ဒါမှ content ကို generate လုပ်နိုင်မှာပါ။',
+        'Missing Content Length'
+      );
+      return;
+    }
+
+    const language = document.getElementById('language').value;
+    if (!language || language.trim() === '') {
+      notify.warning(
+        'Output Language ရွေးချယ်ပါ။ ဒါမှ content ကို generate လုပ်နိုင်မှာပါ။',
+        'Missing Output Language'
+      );
+      return;
+    }
+
     try {
+      // Get translated text for "Generating..." using current language
+      const currentLang = window.currentLanguage || 'en';
+      const generatingText =
+        typeof window.getTranslation === 'function'
+          ? window.getTranslation('Generating content...', currentLang)
+          : 'Generating content...';
+
+      const isShortContent = wordCount === '150';
+
+      // Show loading animation (faster for short content length)
+      showLoadingAnimation(generatingText, {
+        intervalMs: isShortContent ? SHORT_LOADING_INTERVAL : DEFAULT_LOADING_INTERVAL,
+      });
+
       // Set loading state
       generateBtn.disabled = true;
+
+      // Hide wand icon and show spinner
+      if (generateWandIcon) {
+        generateWandIcon.classList.add('hidden');
+      }
       generateSpinner.classList.remove('hidden');
-      const generatingText = window.getTranslation ? 
-        window.getTranslation('Generating...') : 
-        'Generating...';
+
       generateBtnText.textContent = generatingText;
+
       contentArea.value = '';
       saveContentBtn.disabled = true;
-      
+
       // Disable navigation links during generation
       disableNavigationLinks();
+
+      if (apiKeyBtn) {
+        apiKeyBtn.disabled = true;
+        apiKeyBtn.classList.add('disabled');
+      }
 
       const formData = new FormData();
       formData.append('pageName', pageName);
@@ -236,19 +376,12 @@ document.addEventListener('DOMContentLoaded', function () {
       formData.append('purpose', purpose);
       formData.append('writingStyle', writingStyle);
       formData.append('audience', audience);
-      formData.append('wordCount', document.getElementById('word-count').value);
+      formData.append('wordCount', wordCount);
       formData.append('keywords', keywords);
       formData.append('hashtags', hashtags);
       formData.append('cta', cta);
       formData.append('negativeConstraints', negativeConstraints);
-      formData.append('copywritingModel', document.getElementById('copywriting-model').value);
-      formData.append('language', document.getElementById('language').value);
-
-      // Add reference links
-      if (window.getReferenceLinks) {
-        const referenceLinks = window.getReferenceLinks();
-        formData.append('referenceLinks', JSON.stringify(referenceLinks));
-      }
+      formData.append('language', language);
 
       // Add emoji toggle state
       const includeEmojis = document.getElementById('emoji-toggle').checked;
@@ -284,38 +417,92 @@ document.addEventListener('DOMContentLoaded', function () {
         body: formData,
       });
 
-      // Check if response is ok
-      if (!response.ok) {
-        if (response.status === 413) {
-          notify.error('ပုံဖိုင်က အရမ်းကြီးလွန်းပါတယ်။ ပိုသေးတဲ့ ပုံကို သုံးပါ။', 'File Too Large');
-          return;
-        }
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
       const data = await response.json();
 
+      // Check if response has error
       if (data.error) {
-        notify.error(data.error, 'Generation Failed');
+        // Translate error message if available
+        const translatedError = window.getTranslation
+          ? window.getTranslation(data.error)
+          : data.error;
+        // Handle specific error cases
+        if (response.status === 413) {
+          notify.error('ပုံဖိုင်က အရမ်းကြီးလွန်းပါတယ်။ ပိုသေးတဲ့ ပုံကို သုံးပါ။', 'File Too Large');
+        } else if (response.status === 403) {
+          // Get translated title for expired account based on error message
+          let titleKey;
+          if (data.error && data.error.includes('trial period')) {
+            titleKey = 'Your trial period has ended.';
+          } else if (data.error && data.error.includes('subscription period')) {
+            titleKey = 'Your subscription period has ended';
+          } else {
+            titleKey = 'Your trial period has ended.'; // fallback
+          }
+          
+          const expiredTitle = window.getTranslation
+            ? window.getTranslation(titleKey)
+            : titleKey;
+          notify.error(translatedError, expiredTitle);
+        } else {
+          notify.error(translatedError, 'Generation Failed');
+        }
       } else {
         contentArea.value = data.content;
+
+        // Show the content area and hide the empty state
+        if (generatedContentDisplay) {
+          generatedContentDisplay.style.display = 'none';
+        }
+        contentArea.style.display = 'block';
+
+        // Show and enable buttons
+        saveContentBtn.style.display = 'inline-flex';
         saveContentBtn.disabled = false;
+        if (copyContentBtn) {
+          copyContentBtn.style.display = 'inline-flex';
+        }
+
+        // Update content counts immediately after generation
+        if (data.remaining_count !== undefined) {
+          updateContentCounts(data.remaining_count, data.total_generated);
+        }
+
         notify.success('Content generated successfully!', 'Success');
       }
     } catch (error) {
       console.error('Error:', error);
-      notify.error('An error occurred while generating content', 'Network Error');
+      notify.error(
+        'Content generation is currently unavailable. Please try again later.',
+        'Network Error'
+      );
     } finally {
+      // Hide loading animation
+      hideLoadingAnimation();
+
       // Reset loading state
       generateBtn.disabled = false;
+
+      // Show wand icon and hide spinner
+      if (generateWandIcon) {
+        generateWandIcon.classList.remove('hidden');
+      }
       generateSpinner.classList.add('hidden');
-      const generateText = window.getTranslation ? 
-        window.getTranslation('Generate Content') : 
-        'Generate Content';
+
+      // Get translated text for "Generate Content" using current language
+      const currentLang = window.currentLanguage || 'en';
+      const generateText =
+        typeof window.getTranslation === 'function'
+          ? window.getTranslation('Generate Content', currentLang)
+          : 'Generate Content';
       generateBtnText.textContent = generateText;
-      
+
       // Re-enable navigation links after generation
       enableNavigationLinks();
+
+      if (apiKeyBtn) {
+        apiKeyBtn.disabled = false;
+        apiKeyBtn.classList.remove('disabled');
+      }
     }
   });
 
@@ -323,7 +510,7 @@ document.addEventListener('DOMContentLoaded', function () {
   saveContentBtn.addEventListener('click', async function () {
     const content = contentArea.value;
     const pageName = document.getElementById('page-name').value;
-    const promptText = document.getElementById('prompt').value;
+    const promptText = document.getElementById('prompt').value.substring(0, 50);
 
     if (!content.trim()) {
       notify.warning('No content to save', 'Missing Content');
@@ -334,25 +521,31 @@ document.addEventListener('DOMContentLoaded', function () {
     const defaultTitle = pageName.trim() || promptText.substring(0, 50);
 
     // Create a modal for saving content
-    const promptMessage = window.getTranslation ? 
-      window.getTranslation('Enter a title for this content:') : 
-      'Enter a title for this content:';
-    
-    const modalTitle = window.getTranslation ? 
-      window.getTranslation('Save Content') : 
-      'Save Content';
-    
-    const title = await modal.prompt(
-      promptMessage,
-      modalTitle,
-      defaultTitle,
-      'Content title...'
-    );
+    const promptMessage = window.getTranslation
+      ? window.getTranslation('Enter a title for this content:')
+      : 'Enter a title for this content:';
+
+    const modalTitle = window.getTranslation
+      ? window.getTranslation('Save Content')
+      : 'Save Content';
+
+    const confirmButtonText = window.getTranslation ? window.getTranslation('Save') : 'Save';
+
+    const title = await modal.prompt(promptMessage, modalTitle, defaultTitle, 'Content title...', {
+      required: true,
+      confirmText: confirmButtonText,
+    });
 
     if (title) {
       try {
         saveContentBtn.disabled = true;
-        saveContentBtn.textContent = 'Saving...';
+        const saveTextSpan = saveContentBtn.querySelector('.save-text');
+        if (saveTextSpan) {
+          const savingText = window.getTranslation
+            ? window.getTranslation('Saving...')
+            : 'Saving...';
+          saveTextSpan.textContent = savingText;
+        }
 
         // Get selected writing styles for saving
         const selectedStylesForSave = [];
@@ -374,12 +567,6 @@ document.addEventListener('DOMContentLoaded', function () {
           document.getElementById('negative-constraints').value
         );
 
-        // Add reference links
-        if (window.getReferenceLinks) {
-          const referenceLinks = window.getReferenceLinks();
-          formData.append('reference_links', JSON.stringify(referenceLinks));
-        }
-
         const response = await fetch('/contents/save', {
           method: 'POST',
           body: formData,
@@ -393,18 +580,34 @@ document.addEventListener('DOMContentLoaded', function () {
           // Update total content count
           updateTotalContentCount();
 
-          // Add new content to recent content list
-          addToRecentContentList(data.content);
-          
-          // Alternative approach: refresh the recent content section
-          refreshRecentContent();
+          // Note: Recent Content section has been removed from the UI
+          // addToRecentContentList(data.content);
+          // refreshRecentContent();
 
           // Clear the content area and reset form
           contentArea.value = '';
+          contentArea.style.display = 'none';
+          if (generatedContentDisplay) {
+            generatedContentDisplay.style.display = 'flex';
+          }
+
+          // Hide save and copy buttons
+          saveContentBtn.style.display = 'none';
+          saveContentBtn.disabled = true;
+          if (copyContentBtn) {
+            copyContentBtn.style.display = 'none';
+          }
+
+          // Reset form fields
           document.getElementById('page-name').value = '';
           document.getElementById('prompt').value = '';
-          saveContentBtn.disabled = true;
-          saveContentBtn.textContent = 'Save Content';
+
+          // Reset save button text
+          const saveTextSpan = saveContentBtn.querySelector('.save-text');
+          if (saveTextSpan) {
+            const saveText = window.getTranslation ? window.getTranslation('Save') : 'Save';
+            saveTextSpan.textContent = saveText;
+          }
         } else {
           notify.error(data.error || 'An error occurred', 'Save Failed');
         }
@@ -413,28 +616,143 @@ document.addEventListener('DOMContentLoaded', function () {
         notify.error('An error occurred while saving content', 'Network Error');
       } finally {
         saveContentBtn.disabled = false;
-        saveContentBtn.textContent = 'Save Content';
+        const saveTextSpan = saveContentBtn.querySelector('.save-text');
+        if (saveTextSpan) {
+          const saveText = window.getTranslation ? window.getTranslation('Save') : 'Save';
+          saveTextSpan.textContent = saveText;
+        }
       }
     }
   });
+
+  // Copy content functionality
+  if (copyContentBtn) {
+    copyContentBtn.addEventListener('click', async function () {
+      const content = contentArea.value;
+
+      if (!content || content.trim() === '') {
+        notify.warning('No content to copy', 'Empty Content');
+        return;
+      }
+
+      try {
+        // Use Clipboard API
+        await navigator.clipboard.writeText(content);
+
+        // Update button text temporarily
+        const textSpan = copyContentBtn.querySelector('span');
+        const originalText = textSpan.textContent;
+
+        // Get translated text
+        const copiedText =
+          typeof window.getTranslation === 'function'
+            ? window.getTranslation('Copied!')
+            : 'Copied!';
+
+        textSpan.textContent = copiedText;
+
+        // Show success notification
+        notify.success('Content copied to clipboard!', 'Copy Success');
+
+        // Reset button text after 2 seconds
+        setTimeout(() => {
+          const copyText =
+            typeof window.getTranslation === 'function' ? window.getTranslation('Copy') : 'Copy';
+
+          const textSpan = copyContentBtn.querySelector('span');
+          if (textSpan) {
+            textSpan.textContent = copyText;
+          }
+        }, 2000);
+      } catch (error) {
+        console.error('Error copying content:', error);
+
+        // Fallback for older browsers
+        try {
+          contentArea.select();
+          document.execCommand('copy');
+          notify.success('Content copied to clipboard!', 'Copy Success');
+        } catch (fallbackError) {
+          notify.error(
+            'Failed to copy content. Please try selecting and copying manually.',
+            'Copy Failed'
+          );
+        }
+      }
+    });
+  }
 });
 
-// Function to update total content count
+// Function to update content counts after generation
+function updateContentCounts(remainingCount, totalGenerated) {
+  // Update remaining content count for non-admin users
+  const remainingContentElement = document.querySelector(
+    '.bg-gradient-to-r.from-blue-600 p.text-2xl'
+  );
+  if (remainingContentElement) {
+    // Check if it's showing infinity symbol for normal users or if remaining count is "unlimited"
+    if (remainingContentElement.textContent === '∞' || remainingCount === 'unlimited') {
+      // Keep showing infinity for normal users
+      remainingContentElement.textContent = '∞';
+    } else {
+      // Update count for trial users
+      remainingContentElement.textContent = remainingCount;
+    }
+  }
+
+  // Update credit count in desktop menu
+  updateMenuCreditCount(remainingCount);
+
+  // Show warning if user is running low on content generations (only for trial users with numeric count)
+  if (typeof remainingCount === 'number') {
+    if (remainingCount <= 1 && remainingCount > 0) {
+      notify.warning(
+        `You have ${remainingCount} content generation remaining. Your account will expire in 1 day.`,
+        'Low Content Count'
+      );
+    }
+  }
+}
+
+// Function to update credit count in menu
+function updateMenuCreditCount(remainingCount) {
+  // Skip if unlimited/infinity
+  if (remainingCount === 'unlimited' || remainingCount === '∞') {
+    return;
+  }
+
+  // Update desktop menu credit count by ID
+  const desktopCreditCount = document.getElementById('desktop-menu-credit-count');
+  if (desktopCreditCount) {
+    desktopCreditCount.textContent = remainingCount;
+  }
+
+  // Update mobile menu credit count by ID
+  const mobileCreditCount = document.getElementById('mobile-menu-credit-count');
+  if (mobileCreditCount) {
+    mobileCreditCount.textContent = remainingCount;
+  }
+}
+
+// Function to update total content count (for saved content)
 function updateTotalContentCount() {
-  // Look for the total count in the gradient box
-  const totalContentElement = document.querySelector('.bg-gradient-to-r.from-blue-600 p');
+  // Look for the total count in the red gradient box (saved content count)
+  const totalContentElement = document.querySelector('.bg-gradient-to-r.from-red-600 p.text-3xl');
   if (totalContentElement) {
     const currentCount = parseInt(totalContentElement.textContent) || 0;
     totalContentElement.textContent = currentCount + 1;
   }
 }
 
-// Function to add new content to recent content list
+// Function to add new content to recent content list (DEPRECATED - Recent Content section removed)
 function addToRecentContentList(contentData) {
+  // This function is no longer used as Recent Content section has been removed
+  return;
+
   // Find the Recent Content section first, then look for the content list inside it
   const recentContentSection = document.querySelector('h2[data-translate="Recent Content"]');
   let recentContentList = null;
-  
+
   if (recentContentSection) {
     // Find the parent container of the Recent Content section
     const sectionContainer = recentContentSection.closest('.backdrop-blur-sm');
@@ -443,12 +761,12 @@ function addToRecentContentList(contentData) {
       recentContentList = sectionContainer.querySelector('.space-y-3');
     }
   }
-  
+
   // Fallback to original selector if the above doesn't work
   if (!recentContentList) {
     recentContentList = document.querySelector('.space-y-3');
   }
-  
+
   // If no recent content list exists, we need to create it and replace the "no content" message
   if (!recentContentList) {
     // Find the "no content" message specifically in the Recent Content section
@@ -459,38 +777,36 @@ function addToRecentContentList(contentData) {
         noContentMessage = sectionContainer.querySelector('.text-gray-500.text-center.py-8');
       }
     }
-    
+
     // Fallback to global search
     if (!noContentMessage) {
       noContentMessage = document.querySelector('.text-gray-500.text-center.py-8');
     }
-    
+
     if (noContentMessage) {
       // Create the recent content container
       recentContentList = document.createElement('div');
       recentContentList.className = 'space-y-3';
-      
+
       // Replace the "no content" message with our new container
       noContentMessage.parentNode.replaceChild(recentContentList, noContentMessage);
     }
   }
-  
+
   if (recentContentList && contentData) {
     // Create new content item matching the template structure
     const contentItem = document.createElement('div');
     contentItem.className = 'border-l-4 border-red-600 pl-4 py-2';
-    
-    // Format the current date/time
+
+    // Format the current date/time in DD/MM/YY HH:MM format
     const now = new Date();
-    const timeString = now.toLocaleString('en-GB', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    }).replace(',', '');
-    
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = String(now.getFullYear()).slice(-2);
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const timeString = `${day}/${month}/${year} ${hours}:${minutes}`;
+
     contentItem.innerHTML = `
       <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start space-y-2 sm:space-y-0">
         <div class="flex-1 min-w-0">
@@ -523,44 +839,48 @@ function addToRecentContentList(contentData) {
 
 // Function to disable navigation links during content generation
 function disableNavigationLinks() {
-  // Find all navigation links
-  const navLinks = document.querySelectorAll('a[href*="dashboard"], a[href*="content"], a[href*="history"]');
-  
+  // Find all navigation links (including voice generator)
+  const navLinks = document.querySelectorAll(
+    'a[href*="dashboard"], a[href*="content"], a[href*="history"], a[href*="voice"]'
+  );
+
   navLinks.forEach(link => {
     // Store original href and onclick
     link.dataset.originalHref = link.href;
     if (link.onclick) {
       link.dataset.originalOnclick = link.onclick.toString();
     }
-    
+
     // Disable the link
     link.href = 'javascript:void(0)';
-    link.onclick = function(e) {
+    link.onclick = function (e) {
       e.preventDefault();
       notify.warning('Please wait for content generation to complete', 'Generation in Progress');
       return false;
     };
-    
+
     // Add visual indication
     link.style.opacity = '0.5';
     link.style.pointerEvents = 'none';
     link.style.cursor = 'not-allowed';
   });
-  
+
   // Also disable specific navigation buttons/links
   const specificLinks = [
     'a[href="/dashboard"]',
-    'a[href="/contents"]', 
+    'a[href="/contents"]',
     'a[href*="content_history"]',
-    'a[data-translate="View All"]'
+    'a[href="/voice-generator"]',
+    'a[data-translate="View All"]',
+    'a[data-translate="Voice Input"]',
   ];
-  
+
   specificLinks.forEach(selector => {
     const elements = document.querySelectorAll(selector);
     elements.forEach(element => {
       element.dataset.originalHref = element.href;
       element.href = 'javascript:void(0)';
-      element.onclick = function(e) {
+      element.onclick = function (e) {
         e.preventDefault();
         notify.warning('Please wait for content generation to complete', 'Generation in Progress');
         return false;
@@ -576,14 +896,14 @@ function disableNavigationLinks() {
 function enableNavigationLinks() {
   // Find all navigation links
   const navLinks = document.querySelectorAll('a[data-original-href]');
-  
+
   navLinks.forEach(link => {
     // Restore original href
     if (link.dataset.originalHref) {
       link.href = link.dataset.originalHref;
       delete link.dataset.originalHref;
     }
-    
+
     // Restore original onclick if it existed
     if (link.dataset.originalOnclick) {
       link.onclick = new Function(link.dataset.originalOnclick);
@@ -591,18 +911,16 @@ function enableNavigationLinks() {
     } else {
       link.onclick = null;
     }
-    
+
     // Remove visual indication
     link.style.opacity = '';
     link.style.pointerEvents = '';
     link.style.cursor = '';
   });
-  
+
   // Also re-enable specific navigation buttons/links
-  const specificLinks = [
-    'a[href="javascript:void(0)"]'
-  ];
-  
+  const specificLinks = ['a[href="javascript:void(0)"]'];
+
   specificLinks.forEach(selector => {
     const elements = document.querySelectorAll(selector);
     elements.forEach(element => {
@@ -618,28 +936,31 @@ function enableNavigationLinks() {
   });
 }
 
-// Function to refresh recent content section by reloading the page section
+// Function to refresh recent content section by reloading the page section (DEPRECATED)
 async function refreshRecentContent() {
+  // This function is no longer used as Recent Content section has been removed
+  return;
+
   try {
     // Simple approach: reload just this section of the page
     const currentUrl = window.location.href;
     const response = await fetch(currentUrl);
-    
+
     if (response.ok) {
       const html = await response.text();
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
-      
+
       // Find the recent content section in the new HTML
       const newRecentSection = doc.querySelector('h2[data-translate="Recent Content"]');
       if (newRecentSection) {
         const newSectionContainer = newRecentSection.closest('.backdrop-blur-sm');
-        
+
         // Find the current recent content section
         const currentRecentSection = document.querySelector('h2[data-translate="Recent Content"]');
         if (currentRecentSection) {
           const currentSectionContainer = currentRecentSection.closest('.backdrop-blur-sm');
-          
+
           if (newSectionContainer && currentSectionContainer) {
             // Replace the entire section
             currentSectionContainer.innerHTML = newSectionContainer.innerHTML;
@@ -649,5 +970,61 @@ async function refreshRecentContent() {
     }
   } catch (error) {
     // Silent error handling
+  }
+}
+
+// Function to cleanup expired users (Admin only)
+async function cleanupExpiredUsers() {
+  const cleanupBtn = document.getElementById('cleanup-expired-btn');
+  if (!cleanupBtn) return;
+
+  try {
+    // Disable button and show loading state
+    cleanupBtn.disabled = true;
+    cleanupBtn.textContent = 'Running cleanup...';
+    cleanupBtn.classList.add('opacity-75');
+
+    const response = await fetch('/admin/cleanup-expired-users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      if (window.notify) {
+        notify.success(
+          `Successfully deleted ${data.deleted_count} expired user accounts`,
+          'Cleanup Complete'
+        );
+      } else {
+        alert(`Successfully deleted ${data.deleted_count} expired user accounts`);
+      }
+
+      // Refresh the page to update user list
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    } else {
+      if (window.notify) {
+        notify.error(data.error || 'Failed to cleanup expired users', 'Cleanup Failed');
+      } else {
+        alert(data.error || 'Failed to cleanup expired users');
+      }
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    if (window.notify) {
+      notify.error('An error occurred while cleaning up expired users', 'Network Error');
+    } else {
+      alert('An error occurred while cleaning up expired users');
+    }
+  } finally {
+    // Reset button state
+    cleanupBtn.disabled = false;
+    cleanupBtn.textContent = 'Manual Cleanup Now';
+    cleanupBtn.classList.remove('opacity-75');
   }
 }

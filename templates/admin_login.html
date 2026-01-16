@@ -1,144 +1,171 @@
-{% extends "layout.html" %} {% block title %}Admin Login - Genius AutoWriter{% endblock %} {% block content %}
-<div class="min-h-screen py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
-  <div class="max-w-md w-full">
-    <div class="backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-red-600/30" style="background-color: #1F1F1F;">
-      <!-- Logo and Header -->
-      <div class="text-center mb-8">
-        <div class="mx-auto w-20 h-20 flex items-center justify-center mb-4">
-          <img 
-            src="{{ url_for('static', filename='images/mot-logo.png') }}" 
-            alt="MOT Logo" 
-            class="w-20 h-20 object-contain"
-            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-          />
-          <!-- Fallback SVG if image fails to load -->
-          <svg width="80" height="80" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="display: none;">
-            <!-- Left vertical lines -->
-            <rect x="5" y="20" width="3" height="60" fill="#ef4444"/>
-            <rect x="10" y="25" width="3" height="50" fill="#ef4444"/>
-            <rect x="15" y="30" width="3" height="40" fill="#ef4444"/>
-            <rect x="20" y="35" width="3" height="30" fill="#ef4444"/>
-            
-            <!-- Center circle -->
-            <circle cx="50" cy="50" r="25" fill="none" stroke="#ef4444" stroke-width="8"/>
-            
-            <!-- Right vertical lines -->
-            <rect x="77" y="20" width="8" height="60" fill="#ef4444"/>
-            
-            <!-- Top right elements -->
-            <rect x="70" y="15" width="15" height="8" fill="#ef4444"/>
-            <circle cx="88" cy="25" r="3" fill="#ef4444"/>
-            <circle cx="95" cy="30" r="2" fill="#ef4444"/>
-          </svg>
-        </div>
-        <h1 class="text-3xl font-bold text-white mb-2" data-translate="Admin Login">Admin Login</h1>
-        <p class="text-gray-300" data-translate="Sign in to admin panel">Sign in to admin panel</p>
-      </div>
-      <!-- Admin Login Form -->
-      <form method="POST" class="login-form space-y-6" id="adminLoginForm">
-        {{ form.hidden_tag() }}
-
-        <div class="form-field">
-          <label for="email" class="block text-sm font-medium text-white mb-2" data-translate="Email">Email</label>
-          {{ form.email(class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all duration-200 bg-white text-black placeholder-gray-500", placeholder="Enter your email", onkeydown="return preventSpaceKey(event)", oninput="cleanInput(event)", onpaste="setTimeout(() => cleanInput(event), 10)", autocomplete="off", **{"data-translate-placeholder": "Enter your email"}) }}
-          {% if form.email.errors %}
-          <div class="text-red-400 text-sm mt-1">
-            {% for error in form.email.errors %}
-            <p>{{ error }}</p>
-            {% endfor %}
+{% extends "layout.html" %} 
+{% block title %}Admin Login - Genius AutoWriter{% endblock %} 
+{% block content %}
+<div class="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md sm:max-w-lg lg:max-w-4xl w-full">
+      <div
+        class="backdrop-blur-sm p-8 sm:p-10 lg:p-16 rounded-2xl shadow-2xl"
+        style="background-color: rgba(0, 0, 0, 0.8); border: 1px solid rgba(220, 38, 38, 0.4)"
+      >
+        <!-- Logo in Card -->
+        <div class="text-center mb-8">
+          <div class="mb-4 flex justify-center">
+            <img
+              src="{{ url_for('static', filename='images/mot-logo_cropped.png') }}"
+              alt="MOT Logo"
+              class="h-12 lg:h-16 w-auto object-contain"
+            />
           </div>
-          {% endif %}
+          <h2 class="text-2xl lg:text-3xl font-bold text-white mb-2" data-translate="Welcome Back">
+            Welcome Back
+          </h2>
+          <p class="text-red-600 font-bold text-xl lg:text-2xl" data-translate="Genius Autowriter">
+            Genius Autowriter
+          </p>
         </div>
+        <!-- Admin Login Form -->
+        <div class="max-w-xl mx-auto">
+        <form method="POST" class="login-form space-y-6" id="adminLoginForm">
+          {{ form.hidden_tag() }}
 
-        <div class="form-field">
-          <label for="password" class="block text-sm font-medium text-white mb-2" data-translate="Password">Password</label> 
-          <div class="relative">
-            {{ form.password(class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all duration-200 bg-white text-black placeholder-gray-500", id="password-field", placeholder="Enter your password", onkeydown="return preventSpaceKey(event)", oninput="cleanInput(event)", onpaste="setTimeout(() => cleanInput(event), 10)", autocomplete="off", **{"data-translate-placeholder": "Enter your password"}) }}
-            <button type="button" class="password-toggle absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700" onclick="togglePasswordVisibility()">
-              <!-- Eye Open Icon -->
-              <svg id="eye-open" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 20px; height: 20px;">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                />
-              </svg>
-              <!-- Eye Closed Icon -->
-              <svg id="eye-closed" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 20px; height: 20px; display: none;">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
-                />
-              </svg>
-            </button>
+          <div class="form-field">
+            <label
+              for="email"
+              class="block text-sm lg:text-base font-medium text-white mb-2"
+              data-translate="Email"
+              >Email</label
+            >
+            {{ form.email(class="w-full px-4 py-3 lg:px-5 lg:py-3.5 lg:text-base border-0 border-b-2 border-red-600 rounded-lg focus:outline-none focus:border-red-500 transition-all duration-200 bg-white text-black placeholder-gray-400", placeholder="Enter your email", onkeydown="return preventSpaceKey(event)", oninput="cleanInput(event)", onpaste="setTimeout(() => cleanInput(event), 10)", autocomplete="off", **{"data-translate-placeholder": "Enter your email"}) }} {% if form.email.errors %}
+            <div class="text-red-400 text-sm mt-1">
+              {% for error in form.email.errors %}
+              <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+            {% endif %}
           </div>
-          {% if form.password.errors %}
-          <div class="text-red-400 text-sm mt-1">
-            {% for error in form.password.errors %}
-            <p>{{ error }}</p>
-            {% endfor %}
+
+          <div class="form-field">
+            <label
+              for="password"
+              class="block text-sm lg:text-base font-medium text-white mb-2"
+              data-translate="Password"
+              >Password</label
+            >
+            <div class="relative">
+              {{ form.password(class="w-full px-4 py-3 lg:px-5 lg:py-3.5 lg:text-base pr-12 border-0 border-b-2 border-red-600 rounded-lg focus:outline-none focus:border-red-500 transition-all duration-200 bg-white text-black placeholder-gray-400", id="password-field", placeholder="Enter your password", onkeydown="return preventSpaceKey(event)", oninput="cleanInput(event)", onpaste="setTimeout(() => cleanInput(event), 10)", autocomplete="off", **{"data-translate-placeholder": "Enter your password"}) }}
+              <button
+                type="button"
+                class="password-toggle absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
+                onclick="togglePasswordVisibility()"
+              >
+                <!-- Eye Open Icon -->
+                <svg
+                  id="eye-open"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  style="width: 20px; height: 20px"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                  />
+                </svg>
+                <!-- Eye Closed Icon -->
+                <svg
+                  id="eye-closed"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  style="width: 20px; height: 20px; display: none"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
+                  />
+                </svg>
+              </button>
+            </div>
+            {% if form.password.errors %}
+            <div class="text-red-400 text-sm mt-1">
+              {% for error in form.password.errors %}
+              <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+            {% endif %}
           </div>
-          {% endif %}
+
+          <!-- Submit Button -->
+          <div class="form-field flex justify-center">
+            {{ form.submit(class="bg-red-600 hover:bg-red-700 text-white py-3 lg:py-3.5 px-8 lg:text-base rounded-lg
+            font-semibold transition-all duration-200 shadow-lg", style="width: 100%; max-width: 200px;", **{"data-translate": "Login"}) }}
+          </div>
+          <style>
+            @media (min-width: 1024px) {
+              button[type="submit"], input[type="submit"] {
+                max-width: 320px !important;
+              }
+            }
+          </style>
+        </form>
         </div>
 
-        <!-- Submit Button -->
-        <div class="form-field">
-          {{ form.submit(class="w-full bg-red-600 text-white py-3 px-4 rounded-xl hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:ring-offset-2 transition-all duration-200 font-medium shadow-lg", **{"data-translate": "Admin Login"}) }}
+        <!-- Footer in Card -->
+        <div class="mt-6 text-center">
+          <p class="text-gray-400 text-xs" data-translate="Powered by Myanmar Online Technology">
+            Powered by Myanmar Online Technology
+          </p>
         </div>
-      </form>
-
-      <!-- Footer -->
-      <div class="mt-8 text-center">
-        <p class="text-gray-500 text-sm" data-translate="Powered by Myanmar Online Technology">Powered by Myanmar Online Technology</p>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-function togglePasswordVisibility() {
-  const passwordField = document.getElementById('password-field');
-  const eyeOpen = document.getElementById('eye-open');
-  const eyeClosed = document.getElementById('eye-closed');
-  
-  if (passwordField.type === 'password') {
-    passwordField.type = 'text';
-    eyeOpen.style.display = 'none';
-    eyeClosed.style.display = 'block';
-  } else {
-    passwordField.type = 'password';
-    eyeOpen.style.display = 'block';
-    eyeClosed.style.display = 'none';
-  }
-}
+  function togglePasswordVisibility() {
+    const passwordField = document.getElementById('password-field');
+    const eyeOpen = document.getElementById('eye-open');
+    const eyeClosed = document.getElementById('eye-closed');
 
-// Prevent space key in password and email fields
-function preventSpaceKey(event) {
-  // Check if the pressed key is space (keyCode 32 or key ' ')
-  if (event.keyCode === 32 || event.key === ' ' || event.key === 'Spacebar') {
-    // Prevent the default action (typing the space)
-    event.preventDefault();
-    event.stopPropagation();
-    return false;
+    if (passwordField.type === 'password') {
+      passwordField.type = 'text';
+      eyeOpen.style.display = 'none';
+      eyeClosed.style.display = 'block';
+    } else {
+      passwordField.type = 'password';
+      eyeOpen.style.display = 'block';
+      eyeClosed.style.display = 'none';
+    }
   }
-  return true;
-}
 
-// Additional function to clean input on paste and input events
-function cleanInput(event) {
-  const input = event.target;
-  // Remove all spaces from the input value
-  input.value = input.value.replace(/\s/g, '');
-}
+  // Prevent space key in password and email fields
+  function preventSpaceKey(event) {
+    // Check if the pressed key is space (keyCode 32 or key ' ')
+    if (event.keyCode === 32 || event.key === ' ' || event.key === 'Spacebar') {
+      // Prevent the default action (typing the space)
+      event.preventDefault();
+      event.stopPropagation();
+      return false;
+    }
+    return true;
+  }
+
+  // Additional function to clean input on paste and input events
+  function cleanInput(event) {
+    const input = event.target;
+    // Remove all spaces from the input value
+    input.value = input.value.replace(/\s/g, '');
+  }
 </script>
 
 {% endblock %}
