@@ -175,6 +175,7 @@ class User(UserMixin, db.Model):
     last_failed_login = db.Column(db.DateTime, nullable=True)
     locked_until = db.Column(db.DateTime, nullable=True)
     content_count = db.Column(db.Integer, default=0, nullable=False)  # Track content generation count
+    image_credits = db.Column(db.Integer, default=20, nullable=False)
     expires_at = db.Column(db.DateTime, nullable=True)  # Account expiration date
     subscription_start = db.Column(db.DateTime, nullable=True)  # Subscription start date
     user_type = db.Column(db.String(20), default='trial', nullable=True)  # 'trial' or 'normal' - nullable for backward compatibility
@@ -708,6 +709,7 @@ def create_user():
             password_hash = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
             is_admin = False  # Always create non-admin users
             user_type = form.user_type.data
+            image_credits_value = 20
             
             # Set expiration date based on user type
             expires_at = None
@@ -758,6 +760,16 @@ def create_user():
                         expires_at = myanmar_expires.astimezone(timezone.utc).replace(tzinfo=None)
                     subscription_duration = '1day'  # For display purposes
                 elif user_type == 'normal':
+                    image_credits_input = request.form.get('image_credits', '').strip()
+                    if image_credits_input:
+                        try:
+                            image_credits_value = int(image_credits_input)
+                            if image_credits_value < 0:
+                                flash('Image credits must be 0 or more', 'error')
+                                return redirect(url_for('create_user'))
+                        except ValueError:
+                            flash('Invalid image credits value', 'error')
+                            return redirect(url_for('create_user'))
                     # Normal users: use selected expiration date
                     expiration_date_str = form.expiration_date.data
                     
@@ -840,6 +852,7 @@ def create_user():
                     password_hash=password_hash,
                     is_admin=is_admin,
                     user_type=user_type,
+                    image_credits=image_credits_value,
                     subscription_start=subscription_start,
                     subscription_duration=subscription_duration,
                     expires_at=expires_at
@@ -997,14 +1010,15 @@ def edit_user(user_id):
                 'subscription_start': subscription_start_formatted,
                 'expires_at': expires_at_formatted,
                 'is_active': user.is_active,
-                'remaining_credit': user.get_remaining_content_count() if user.user_type != 'normal' and not user.is_admin else None
+                'remaining_credit': user.get_remaining_content_count() if user.user_type != 'normal' and not user.is_admin else None,
+                'image_credits': user.image_credits
             }
         })
     
     # POST request - update user data
     try:
         data = request.get_json()
-        
+
         # Validate and update email
         new_email = data.get('email', '').lower().strip()
         if new_email and new_email != user.email:
@@ -1013,7 +1027,7 @@ def edit_user(user_id):
             if existing_user:
                 return jsonify({'error': 'Email already exists'}), 400
             user.email = new_email
-        
+
         # Update password if provided
         new_password = data.get('password', '').strip()
         if new_password:
@@ -1022,7 +1036,7 @@ def edit_user(user_id):
             if ' ' in new_password:
                 return jsonify({'error': 'Password cannot contain spaces'}), 400
             user.password_hash = bcrypt.generate_password_hash(new_password).decode('utf-8')
-        
+
         # Parse subscription_start first (needed for expiration date validation)
         subscription_start_for_validation = None
         subscription_start_str = data.get('subscription_start')
@@ -1031,14 +1045,14 @@ def edit_user(user_id):
                 timezone_offset_minutes = data.get('timezone_offset')
                 if timezone_offset_minutes is not None:
                     timezone_offset_minutes = int(timezone_offset_minutes)
-                
+
                 # Parse subscription start datetime
                 try:
                     start_datetime_local = datetime.strptime(subscription_start_str, '%Y-%m-%dT%H:%M')
                 except ValueError:
                     start_date = datetime.strptime(subscription_start_str, '%Y-%m-%d')
                     start_datetime_local = datetime.combine(start_date.date(), datetime.min.time())
-                
+
                 # Convert from user's local time to UTC
                 if timezone_offset_minutes is not None:
                     user_tz = timezone(timedelta(minutes=-timezone_offset_minutes))
@@ -1047,18 +1061,18 @@ def edit_user(user_id):
                 else:
                     start_datetime_with_tz = start_datetime_local.replace(tzinfo=MYANMAR_TZ)
                     start_datetime_utc = start_datetime_with_tz.astimezone(timezone.utc)
-                
+
                 subscription_start_for_validation = start_datetime_utc.replace(tzinfo=None)
                 user.subscription_start = subscription_start_for_validation
-                
+
             except ValueError as e:
                 return jsonify({'error': f'Invalid subscription start date format: {str(e)}'}), 400
-        
+
         # Update user type
         new_user_type = data.get('user_type')
         if new_user_type in ['trial', 'normal']:
             user.user_type = new_user_type
-            
+
             # Update credit for trial users
             if new_user_type == 'trial':
                 credit = data.get('credit')
@@ -1067,31 +1081,30 @@ def edit_user(user_id):
                         credit_value = int(credit)
                         if credit_value < 0 or credit_value > 100:
                             return jsonify({'error': 'Credit must be between 0 and 100'}), 400
-                        # Set content_count to achieve the desired remaining credit
                         # remaining_credit = 5 - content_count, so content_count = 5 - remaining_credit
                         user.content_count = 5 - credit_value
                     except ValueError:
                         return jsonify({'error': 'Invalid credit value'}), 400
-            
+
             # Handle expiration based on user type
             if new_user_type == 'trial':
                 # Get expiration date from request (if provided)
                 expiration_date_str = data.get('expiration_date')
-                
+
                 if expiration_date_str:
                     try:
                         # Get timezone offset from browser (convert to int manually)
                         timezone_offset_minutes = data.get('timezone_offset')
                         if timezone_offset_minutes is not None:
                             timezone_offset_minutes = int(timezone_offset_minutes)
-                        
+
                         # Try to parse as datetime first
                         try:
                             expiry_datetime_local = datetime.strptime(expiration_date_str, '%Y-%m-%dT%H:%M')
                         except ValueError:
                             expiry_date = datetime.strptime(expiration_date_str, '%Y-%m-%d')
                             expiry_datetime_local = datetime.combine(expiry_date.date(), datetime.max.time())
-                        
+
                         # Convert from user's local time to UTC
                         if timezone_offset_minutes is not None:
                             user_tz = timezone(timedelta(minutes=-timezone_offset_minutes))
@@ -1100,12 +1113,10 @@ def edit_user(user_id):
                         else:
                             expiry_datetime_with_tz = expiry_datetime_local.replace(tzinfo=MYANMAR_TZ)
                             expiry_datetime_utc = expiry_datetime_with_tz.astimezone(timezone.utc)
-                        
+
                         # Validate expiration date
                         now_utc = datetime.now(timezone.utc)
-                        
-                        # If subscription_start is set, validate against subscription_start
-                        # Otherwise, validate against current time
+
                         if subscription_start_for_validation:
                             subscription_start_utc = subscription_start_for_validation.replace(tzinfo=timezone.utc)
                             if expiry_datetime_utc <= subscription_start_utc:
@@ -1113,10 +1124,10 @@ def edit_user(user_id):
                         else:
                             if expiry_datetime_utc <= now_utc:
                                 return jsonify({'error': 'Expiration date/time cannot be in the past'}), 400
-                        
+
                         user.expires_at = expiry_datetime_utc.replace(tzinfo=None)
                         user.subscription_duration = '1day'
-                        
+
                     except ValueError:
                         return jsonify({'error': 'Invalid date format'}), 400
                 else:
@@ -1129,28 +1140,25 @@ def edit_user(user_id):
                         myanmar_expires = myanmar_now + timedelta(days=1)
                         user.expires_at = myanmar_expires.astimezone(timezone.utc).replace(tzinfo=None)
                     user.subscription_duration = '1day'
-                
+
             elif new_user_type == 'normal':
                 # Get expiration date from request
                 expiration_date_str = data.get('expiration_date')
-                
+
                 if not expiration_date_str:
                     return jsonify({'error': 'Expiration date is required for Normal Users'}), 400
-                
+
                 try:
-                    # Get timezone offset from browser (convert to int manually)
                     timezone_offset_minutes = data.get('timezone_offset')
                     if timezone_offset_minutes is not None:
                         timezone_offset_minutes = int(timezone_offset_minutes)
-                    
-                    # Try to parse as datetime first
+
                     try:
                         expiry_datetime_local = datetime.strptime(expiration_date_str, '%Y-%m-%dT%H:%M')
                     except ValueError:
                         expiry_date = datetime.strptime(expiration_date_str, '%Y-%m-%d')
                         expiry_datetime_local = datetime.combine(expiry_date.date(), datetime.max.time())
-                    
-                    # Convert from user's local time to UTC
+
                     if timezone_offset_minutes is not None:
                         user_tz = timezone(timedelta(minutes=-timezone_offset_minutes))
                         expiry_datetime_with_tz = expiry_datetime_local.replace(tzinfo=user_tz)
@@ -1158,12 +1166,9 @@ def edit_user(user_id):
                     else:
                         expiry_datetime_with_tz = expiry_datetime_local.replace(tzinfo=MYANMAR_TZ)
                         expiry_datetime_utc = expiry_datetime_with_tz.astimezone(timezone.utc)
-                    
-                    # Validate expiration date
+
                     now_utc = datetime.now(timezone.utc)
-                    
-                    # If subscription_start is set, validate against subscription_start
-                    # Otherwise, validate against current time
+
                     if subscription_start_for_validation:
                         subscription_start_utc = subscription_start_for_validation.replace(tzinfo=timezone.utc)
                         if expiry_datetime_utc <= subscription_start_utc:
@@ -1171,10 +1176,9 @@ def edit_user(user_id):
                     else:
                         if expiry_datetime_utc <= now_utc:
                             return jsonify({'error': 'Expiration date/time cannot be in the past'}), 400
-                    
+
                     user.expires_at = expiry_datetime_utc.replace(tzinfo=None)
-                    
-                    # Calculate duration for display
+
                     days_diff = (expiry_datetime_utc.date() - now_utc.date()).days
                     if days_diff <= 7:
                         user.subscription_duration = f'{days_diff}days'
@@ -1186,12 +1190,23 @@ def edit_user(user_id):
                         user.subscription_duration = '6months'
                     else:
                         user.subscription_duration = '1year'
-                            
+
                 except ValueError as e:
                     return jsonify({'error': f'Invalid date format: {str(e)}'}), 400
-        
+
+        # Update image credits
+        image_credits = data.get('image_credits')
+        if image_credits is not None and image_credits != '':
+            try:
+                image_credits_value = int(image_credits)
+                if image_credits_value < 0:
+                    return jsonify({'error': 'Image credits must be 0 or more'}), 400
+                user.image_credits = image_credits_value
+            except (TypeError, ValueError):
+                return jsonify({'error': 'Invalid image credit value'}), 400
+
         db.session.commit()
-        
+
         return jsonify({
             'success': True,
             'message': 'User updated successfully',
@@ -1201,10 +1216,11 @@ def edit_user(user_id):
                 'user_type': user.user_type,
                 'subscription_duration': user.subscription_duration,
                 'expires_at': user.expires_at.strftime('%Y-%m-%d') if user.expires_at else None,
-                'is_active': user.is_active
+                'is_active': user.is_active,
+                'image_credits': user.image_credits
             }
         })
-        
+
     except Exception as e:
         db.session.rollback()
         logging.error(f"Error updating user: {e}")
@@ -1266,6 +1282,96 @@ def voice_generator():
                          recent_contents=recent_contents,
                          total_contents=total_contents,
                          current_user=current_user)
+
+@app.route('/image-generator')
+@login_required
+@handle_db_errors
+def image_generator():
+    """Image generation page"""
+    if current_user.is_admin:
+        return redirect(url_for('admin_dashboard'))
+    
+    # Block trial users from accessing image generator
+    if current_user.user_type == 'trial':
+        flash('Image Generator is only available for Normal Users. Please contact admin to upgrade your account.', 'error')
+        return redirect(url_for('user_dashboard'))
+    
+    recent_contents = Content.query.filter_by(user_id=current_user.id).order_by(Content.created_at.desc()).limit(3).all()
+    total_contents = Content.query.filter_by(user_id=current_user.id).count()
+    
+    return render_template('image_generator.html', 
+                         recent_contents=recent_contents,
+                         total_contents=total_contents,
+                         current_user=current_user)
+
+@app.route('/api/generate-image', methods=['POST'])
+@login_required
+def generate_image_api():
+    """API endpoint for image generation"""
+    try:
+        # Check if account has expired
+        if current_user.is_account_expired():
+            if current_user.user_type == 'trial':
+                error_message = 'Your trial period has ended. Please contact admin for renewal.'
+            else:
+                error_message = 'Your subscription period has ended. Please contact admin for renewal.'
+            return jsonify({'error': error_message}), 403
+        
+        # Get uploaded files
+        product_image = request.files.get('product_image')
+        logo_image = request.files.get('logo_image')
+        
+        if not product_image:
+            return jsonify({'error': 'Product image is required'}), 400
+        
+        # Get form data
+        main_headline = request.form.get('main_headline', '')
+        subtext = request.form.get('subtext', '')
+        product_name = request.form.get('product_name', '')
+        price = request.form.get('price', '')
+        palette_theme = request.form.get('palette_theme', 'red-black')
+        logo_tint = request.form.get('logo_tint', 'original')
+        style = request.form.get('style', 'modern-minimalist')
+        quantity = request.form.get('quantity', '1')
+
+        # Validate and enforce image credit availability
+        try:
+            quantity_value = int(quantity)
+        except (TypeError, ValueError):
+            quantity_value = 1
+
+        if quantity_value < 1:
+            quantity_value = 1
+
+        if current_user.user_type == 'normal':
+            current_credits = current_user.image_credits or 0
+            if current_credits < quantity_value:
+                return jsonify({
+                    'error': 'Not enough image credits. Please contact admin.',
+                    'remaining_credits': current_credits
+                }), 403
+        extra_directions = request.form.get('extra_directions', '')
+        
+        # Log the image generation request
+        logging.info(f"Image generation request from user {current_user.email}")
+        logging.info(f"Style: {style}, Palette: {palette_theme}, Quantity: {quantity}")
+        
+        # TODO: Integrate with actual image generation API (e.g., DALL-E, Midjourney, or custom model)
+        # For now, return a placeholder response
+        if current_user.user_type == 'normal':
+            current_user.image_credits = max((current_user.image_credits or 0) - quantity_value, 0)
+            db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'message': 'Image generation API is not yet configured. Please set up an image generation service.',
+            'images': [],
+            'remaining_credits': current_user.image_credits if current_user.user_type == 'normal' else None
+        })
+        
+    except Exception as e:
+        logging.error(f"Error generating image: {e}")
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/contents/save', methods=['POST'])
 @login_required
@@ -2370,6 +2476,21 @@ def migrate_database():
                 logging.info("Subscription duration column added successfully")
             else:
                 logging.info("Subscription duration column already exists")
+
+            # Add image_credits column to user table if it doesn't exist
+            result = conn.execute(db.text("""
+                SELECT column_name
+                FROM information_schema.columns
+                WHERE table_name='user' AND column_name='image_credits'
+            """))
+
+            if not result.fetchone():
+                logging.info("Adding image_credits column to user table...")
+                conn.execute(db.text("ALTER TABLE \"user\" ADD COLUMN image_credits INTEGER DEFAULT 20"))
+                conn.commit()
+                logging.info("Image credits column added successfully")
+            else:
+                logging.info("Image credits column already exists")
             
             # Add expires_at column to user table if it doesn't exist
             result = conn.execute(db.text("""
@@ -2419,7 +2540,7 @@ def init_db():
     try:
         with app.app_context():
             db.create_all()
-            migrate_database()
+            # migrate_database()
             create_admin_user()
             
             logging.info("Database tables created/updated.")

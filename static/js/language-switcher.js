@@ -1003,6 +1003,246 @@ const translations = {
     my: 'Content ဖျက်ရန်',
     en: 'Delete Content',
   },
+
+  // Image Generator
+  'Generate Image': {
+    my: 'ပုံဖန်တီးရန်',
+    en: 'Generate Image',
+  },
+  ASSETS: {
+    my: 'ASSETS',
+    en: 'ASSETS',
+  },
+  'PRODUCT PHOTO': {
+    my: 'ထုတ်ကုန်ပုံ',
+    en: 'PRODUCT PHOTO',
+  },
+  'BRAND LOGO (OPTIONAL)': {
+    my: 'Brand Logo (မဖြစ်မနေ မလိုအပ်)',
+    en: 'BRAND LOGO (OPTIONAL)',
+  },
+  'UPLOAD PRODUCT': {
+    my: 'ထုတ်ကုန်တင်ရန်',
+    en: 'UPLOAD PRODUCT',
+  },
+  'UPLOAD LOGO': {
+    my: 'Logo တင်ရန်',
+    en: 'UPLOAD LOGO',
+  },
+  COPY: {
+    my: 'စာသား',
+    en: 'COPY',
+  },
+  'MAIN HEADLINE': {
+    my: 'ခေါင်းစဉ်',
+    en: 'MAIN HEADLINE',
+  },
+  SUBTEXT: {
+    my: 'အခွဲစာသား',
+    en: 'SUBTEXT',
+  },
+  'PRODUCT NAME': {
+    my: 'ထုတ်ကုန်အမည်',
+    en: 'PRODUCT NAME',
+  },
+  PRICE: {
+    my: 'စျေးနှုန်း',
+    en: 'PRICE',
+  },
+  STYLE: {
+    my: 'စတိုင်',
+    en: 'STYLE',
+  },
+  'PALETTE/THEME': {
+    my: 'အရောင်/Theme',
+    en: 'PALETTE/THEME',
+  },
+  'LOGO TINT': {
+    my: 'Logo အရောင်',
+    en: 'LOGO TINT',
+  },
+  ORIGINAL: {
+    my: 'မူရင်း',
+    en: 'ORIGINAL',
+  },
+  TINTED: {
+    my: 'အရောင်ခြယ်ထား',
+    en: 'TINTED',
+  },
+  QUANTITY: {
+    my: 'အရေအတွက်',
+    en: 'QUANTITY',
+  },
+  'EXTRA DIRECTIONS': {
+    my: 'ထပ်ဆောင်းညွှန်ကြားချက်',
+    en: 'EXTRA DIRECTIONS',
+  },
+  GENERATE: {
+    my: 'ဖန်တီးမည်',
+    en: 'GENERATE',
+  },
+  'GENERATING...': {
+    my: 'ဖန်တီးနေသည်...',
+    en: 'GENERATING...',
+  },
+  RENDER: {
+    my: 'ကြည့်ရန်',
+    en: 'RENDER',
+  },
+  PREVIEW: {
+    my: 'ကြိုတင်ကြည့်ရှုမှု',
+    en: 'PREVIEW',
+  },
+  'WAITING FOR ASSETS': {
+    my: 'ပုံများစောင့်ဆိုင်းနေသည်',
+    en: 'WAITING FOR ASSETS',
+  },
+  'Generating your image...': {
+    my: 'သင့်ပုံကို ဖန်တီးနေသည်...',
+    en: 'Generating your image...',
+  },
+  Download: {
+    my: 'ဒေါင်းလုဒ်',
+    en: 'Download',
+  },
+  Regenerate: {
+    my: 'ပြန်လည်ဖန်တီးရန်',
+    en: 'Regenerate',
+  },
+  // Palette/Theme options
+  'Red & Black': {
+    my: 'အနီ နှင့် အမည်း',
+    en: 'Red & Black',
+  },
+  'Modern Black': {
+    my: 'ခေတ်မီ အမည်း',
+    en: 'Modern Black',
+  },
+  'Clean White': {
+    my: 'သန့်ရှင်း အဖြူ',
+    en: 'Clean White',
+  },
+  'Luxury Gold': {
+    my: 'ဇိမ်ခံ ရွှေ',
+    en: 'Luxury Gold',
+  },
+  'Royal Blue': {
+    my: 'တော်ဝင် အပြာ',
+    en: 'Royal Blue',
+  },
+  'Pastel Pink': {
+    my: 'ပါစတယ် ပန်းရောင်',
+    en: 'Pastel Pink',
+  },
+  'Forest Green': {
+    my: 'တောစိမ်း',
+    en: 'Forest Green',
+  },
+  'Dark Mode': {
+    my: 'မှောင်မိုက် Mode',
+    en: 'Dark Mode',
+  },
+  'Light Minimalist': {
+    my: 'အလင်း မင်နီမလစ်',
+    en: 'Light Minimalist',
+  },
+  'Electric Purple': {
+    my: 'လျှပ်စစ် ခရမ်း',
+    en: 'Electric Purple',
+  },
+  'Sunset Gradient': {
+    my: 'နေဝင် Gradient',
+    en: 'Sunset Gradient',
+  },
+  'Corporate Grey': {
+    my: 'လုပ်ငန်း မီးခိုး',
+    en: 'Corporate Grey',
+  },
+  // Style options
+  'Modern Minimalist': {
+    my: 'ခေတ်မီ မင်နီမလစ်',
+    en: 'Modern Minimalist',
+  },
+  'Luxury Premium': {
+    my: 'ဇိမ်ခံ ပရီမီယံ',
+    en: 'Luxury Premium',
+  },
+  'Corporate Professional': {
+    my: 'လုပ်ငန်း ပရော်ဖက်ရှင်နယ်',
+    en: 'Corporate Professional',
+  },
+  'Creative Abstract': {
+    my: 'တီထွင် Abstract',
+    en: 'Creative Abstract',
+  },
+  'Product Showcase': {
+    my: 'ထုတ်ကုန် ပြသခြင်း',
+    en: 'Product Showcase',
+  },
+  'Social Media Ads': {
+    my: 'Social Media ကြော်ငြာ',
+    en: 'Social Media Ads',
+  },
+  'Poster Style': {
+    my: 'ပိုစတာ စတိုင်',
+    en: 'Poster Style',
+  },
+  'Clean Apple-esque': {
+    my: 'Apple စတိုင်',
+    en: 'Clean Apple-esque',
+  },
+  'Bold High Contrast': {
+    my: 'ထင်ရှား contrast မြင့်',
+    en: 'Bold High Contrast',
+  },
+  'Flat Design': {
+    my: 'Flat ဒီဇိုင်း',
+    en: 'Flat Design',
+  },
+  'Streetwear Urban': {
+    my: 'Streetwear Urban',
+    en: 'Streetwear Urban',
+  },
+  'E-commerce Standard': {
+    my: 'E-commerce စံ',
+    en: 'E-commerce Standard',
+  },
+  '1 image': {
+    my: 'ပုံ ၁ ပုံ',
+    en: '1 image',
+  },
+  '2 images': {
+    my: 'ပုံ ၂ ပုံ',
+    en: '2 images',
+  },
+  '3 images': {
+    my: 'ပုံ ၃ ပုံ',
+    en: '3 images',
+  },
+  '4 images': {
+    my: 'ပုံ ၄ ပုံ',
+    en: '4 images',
+  },
+  'Image generated successfully!': {
+    my: 'ပုံ အောင်မြင်စွာ ဖန်တီးပြီးပါပြီ!',
+    en: 'Image generated successfully!',
+  },
+  'Please upload a product image': {
+    my: 'ထုတ်ကုန်ပုံတင်ပါ',
+    en: 'Please upload a product image',
+  },
+  'Please upload a product image first': {
+    my: 'ထုတ်ကုန်ပုံ ဦးစွာ တင်ပါ',
+    en: 'Please upload a product image first',
+  },
+  'Download started!': {
+    my: 'ဒေါင်းလုဒ် စတင်ပါပြီ!',
+    en: 'Download started!',
+  },
+  'No images to download': {
+    my: 'ဒေါင်းလုဒ်လုပ်ရန် ပုံမရှိပါ',
+    en: 'No images to download',
+  },
 };
 
 // Get current language from localStorage or default to Myanmar
@@ -1205,16 +1445,17 @@ window.applyLanguage = applyLanguage;
 window.translations = translations;
 
 // Helper function to change language and notify all components
-window.changeLanguage = function(language) {
+window.changeLanguage = function (language) {
   // Save to localStorage
   localStorage.setItem('language', language);
-  
+
   // Apply language changes
   applyLanguage(language);
-  
-  // Dispatch custom event to notify other components (like expiration countdown)
-  window.dispatchEvent(new CustomEvent('languageChanged', {
-    detail: { language: language }
-  }));
-};
 
+  // Dispatch custom event to notify other components (like expiration countdown)
+  window.dispatchEvent(
+    new CustomEvent('languageChanged', {
+      detail: { language: language },
+    })
+  );
+};

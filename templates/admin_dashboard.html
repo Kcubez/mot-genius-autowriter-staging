@@ -134,6 +134,11 @@ block content %}
                 Remaining Credit
               </th>
               <th
+                class="px-6 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wider"
+              >
+                Image Credits
+              </th>
+              <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
               >
                 Status
@@ -204,6 +209,13 @@ block content %}
                 >
                 {% endif %}
               </td>
+              <td class="px-6 py-4 whitespace-nowrap text-center">
+                {% if user.user_type and user.user_type == 'normal' and not user.is_admin %}
+                <span class="text-sm font-medium text-white">{{ user.image_credits }}</span>
+                {% else %}
+                <span class="text-gray-400 text-sm">N/A</span>
+                {% endif %}
+              </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 {% if user.is_active %}
                 <span
@@ -242,16 +254,24 @@ block content %}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                 {% if user.subscription_start %}
-                  <span class="utc-datetime" data-utc="{{ user.subscription_start.strftime('%Y-%m-%d %H:%M:%S') }}">Loading...</span>
+                <span
+                  class="utc-datetime"
+                  data-utc="{{ user.subscription_start.strftime('%Y-%m-%d %H:%M:%S') }}"
+                  >Loading...</span
+                >
                 {% else %}
-                  <span class="text-gray-400 text-xs">N/A</span>
+                <span class="text-gray-400 text-xs">N/A</span>
                 {% endif %}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                 {% if user.is_admin %}
                 <span class="text-gray-400 text-xs">N/A</span>
                 {% elif user.expires_at %}
-                  <span class="utc-datetime" data-utc="{{ user.expires_at.strftime('%Y-%m-%d %H:%M:%S') }}">Loading...</span>
+                <span
+                  class="utc-datetime"
+                  data-utc="{{ user.expires_at.strftime('%Y-%m-%d %H:%M:%S') }}"
+                  >Loading...</span
+                >
                 {% else %}
                 <span class="text-gray-400 text-xs">N/A</span>
                 {% endif %}
@@ -541,11 +561,28 @@ block content %}
             id="edit-user-type"
             name="user_type"
             class="w-full p-3 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500 text-black bg-white"
-            onchange="toggleEditCreditField(); toggleEditExpirationField()"
+            onchange="
+              toggleEditCreditField();
+              toggleEditImageCreditsField();
+              toggleEditExpirationField();
+            "
           >
             <option value="trial">Trial User</option>
             <option value="normal">Normal User</option>
           </select>
+        </div>
+
+        <!-- Image Credits (for Normal Users only) -->
+        <div id="edit-image-credits-field" style="display: none">
+          <label class="block text-sm font-medium text-white mb-2">Image Credits</label>
+          <input
+            type="number"
+            id="edit-image-credits"
+            name="image_credits"
+            min="0"
+            class="w-full p-3 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500 text-black bg-white"
+            placeholder="Enter image credits"
+          />
         </div>
 
         <!-- Credit (for Trial Users only) -->
@@ -676,7 +713,7 @@ block content %}
             required
             class="w-full p-3 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500 text-black bg-white"
             placeholder="user@gmail.com"
-            onkeydown="return preventSpaceKey(event)"
+            onkeydown="return preventSpaceKey(event);"
             oninput="cleanInput(event)"
             onpaste="setTimeout(() => cleanInput(event), 10)"
             autocomplete="off"
@@ -696,7 +733,7 @@ block content %}
               required
               class="password-input"
               placeholder="Enter password (min 6 characters)"
-              onkeydown="return preventSpaceKey(event)"
+              onkeydown="return preventSpaceKey(event);"
               oninput="cleanInput(event)"
               onpaste="setTimeout(() => cleanInput(event), 10)"
               autocomplete="off"
@@ -743,6 +780,20 @@ block content %}
             <option value="trial">Trial User</option>
             <option value="normal">Normal User</option>
           </select>
+        </div>
+
+        <!-- Image Credits (for Normal Users) -->
+        <div id="create-image-credits-field" style="display: none">
+          <label class="block text-sm font-medium text-white mb-2">Image Credits</label>
+          <input
+            type="number"
+            id="create-image-credits"
+            name="image_credits"
+            min="0"
+            value="20"
+            class="w-full p-3 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500 text-black bg-white"
+            placeholder="Enter image credits"
+          />
         </div>
 
         <!-- Subscription Start (for all users) -->
@@ -883,12 +934,12 @@ block content %}
           try {
             // Parse UTC time (format: YYYY-MM-DD HH:MM:SS)
             const utcDate = new Date(utcString + ' UTC');
-            
+
             // Format date part
             const year = utcDate.getFullYear();
             const month = String(utcDate.getMonth() + 1).padStart(2, '0');
             const day = String(utcDate.getDate()).padStart(2, '0');
-            
+
             // Format time part in 12-hour format with AM/PM
             let hours = utcDate.getHours();
             const minutes = String(utcDate.getMinutes()).padStart(2, '0');
@@ -896,7 +947,7 @@ block content %}
             hours = hours % 12;
             hours = hours ? hours : 12; // 0 should be 12
             const hoursFormatted = String(hours).padStart(2, '0');
-            
+
             const localTimeString = `${year}-${month}-${day} ${hoursFormatted}:${minutes} ${ampm}`;
             element.textContent = localTimeString;
           } catch (e) {
@@ -933,7 +984,7 @@ block content %}
     modal.classList.remove('hidden');
     modal.style.display = 'flex';
     setCreateMinDate();
-    
+
     // Set initial field visibility (trial user by default)
     toggleCreateSubscriptionFields();
 
@@ -983,16 +1034,19 @@ block content %}
   function toggleCreateSubscriptionFields() {
     const userType = document.getElementById('create-user-type').value;
     const expirationField = document.getElementById('create-expiration-field');
+    const imageCreditsField = document.getElementById('create-image-credits-field');
     const dateInput = document.getElementById('create-expiration-date');
 
     if (userType === 'normal') {
       // Show expiration for normal users
       expirationField.style.display = 'block';
+      imageCreditsField.style.display = 'block';
       dateInput.required = true;
       setCreateMinDate();
     } else {
       // Hide expiration for trial users
       expirationField.style.display = 'none';
+      imageCreditsField.style.display = 'none';
       dateInput.required = false;
       dateInput.value = ''; // Clear the value when hidden
     }
@@ -1160,12 +1214,12 @@ block content %}
         // Always try to parse as JSON first
         return response.text().then(text => {
           console.log('Response text (first 500 chars):', text.substring(0, 500));
-          
+
           // Try to parse as JSON
           try {
             const data = JSON.parse(text);
             console.log('Parsed JSON:', data);
-            
+
             // Check for error in JSON response
             if (data.error) {
               return { error: data.error, isError: true };
@@ -1182,7 +1236,9 @@ block content %}
             const doc = parser.parseFromString(text, 'text/html');
             const flashMessages = doc.querySelectorAll('.alert, .flash, [class*="error"]');
             if (flashMessages.length > 0) {
-              const errorText = Array.from(flashMessages).map(el => el.textContent.trim()).join('; ');
+              const errorText = Array.from(flashMessages)
+                .map(el => el.textContent.trim())
+                .join('; ');
               return { error: errorText || 'Failed to create user', isError: true };
             }
             return { success: true };
@@ -1202,7 +1258,9 @@ block content %}
           window.location.reload();
         } else if (data && data.error) {
           if (window.notify) {
-            const errorTitle = data.error.includes('Expiration date') ? 'Expiration Date Error' : '❌ Error';
+            const errorTitle = data.error.includes('Expiration date')
+              ? 'Expiration Date Error'
+              : '❌ Error';
             window.notify.error(data.error, errorTitle);
           } else {
             alert(data.error);
@@ -1271,7 +1329,7 @@ block content %}
   function openEditModal(userId) {
     // Get timezone offset
     const timezoneOffset = new Date().getTimezoneOffset();
-    
+
     // Fetch user data with timezone offset
     fetch(`/admin/users/${userId}/edit?timezone_offset=${timezoneOffset}`)
       .then(response => response.json())
@@ -1285,9 +1343,17 @@ block content %}
           document.getElementById('edit-password').value = '';
           document.getElementById('edit-user-type').value = user.user_type;
 
+          if (window.syncCustomSelect) {
+            window.syncCustomSelect(document.getElementById('edit-user-type'));
+          }
+
           // Populate credit field (remaining content count for trial users)
           if (user.remaining_credit !== undefined) {
             document.getElementById('edit-credit').value = user.remaining_credit;
+          }
+
+          if (user.image_credits !== undefined && user.image_credits !== null) {
+            document.getElementById('edit-image-credits').value = user.image_credits;
           }
 
           if (user.expires_at) {
@@ -1300,6 +1366,7 @@ block content %}
 
           // Show/hide credit and expiration fields
           toggleEditCreditField();
+          toggleEditImageCreditsField();
           toggleEditExpirationField();
 
           // Show modal
@@ -1358,6 +1425,17 @@ block content %}
       creditField.style.display = 'block';
     } else {
       creditField.style.display = 'none';
+    }
+  }
+
+  function toggleEditImageCreditsField() {
+    const userType = document.getElementById('edit-user-type').value;
+    const imageCreditsField = document.getElementById('edit-image-credits-field');
+
+    if (userType === 'normal') {
+      imageCreditsField.style.display = 'block';
+    } else {
+      imageCreditsField.style.display = 'none';
     }
   }
 
@@ -1456,6 +1534,7 @@ block content %}
       subscription_start: document.getElementById('edit-subscription-start').value,
       expiration_date: document.getElementById('edit-expiration-date').value,
       credit: document.getElementById('edit-credit').value,
+      image_credits: document.getElementById('edit-image-credits').value,
       timezone_offset: new Date().getTimezoneOffset(), // Add timezone offset
     };
 
@@ -1522,7 +1601,9 @@ block content %}
 
         if (window.notify) {
           const errorMsg = data.error || 'Failed to update user';
-          const errorTitle = errorMsg.includes('Expiration date') ? 'Expiration Date Error' : 'Error';
+          const errorTitle = errorMsg.includes('Expiration date')
+            ? 'Expiration Date Error'
+            : 'Error';
           notify.error(errorMsg, errorTitle);
         } else {
           alert(data.error || 'Failed to update user');

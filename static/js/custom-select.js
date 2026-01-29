@@ -185,6 +185,20 @@ class CustomSelect {
     }
   }
 
+  syncFromSelect() {
+    this.selectedIndex = this.selectElement.selectedIndex;
+    this.selectedValue.textContent = this.options[this.selectedIndex].textContent;
+
+    this.dropdown.querySelectorAll('.custom-select-option').forEach(opt => {
+      const optIndex = parseInt(opt.dataset.index);
+      if (optIndex === this.selectedIndex) {
+        opt.classList.add('selected');
+      } else {
+        opt.classList.remove('selected');
+      }
+    });
+  }
+
   // Method to update translations
   updateTranslations(language) {
     // Update selected value display
@@ -230,3 +244,11 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }, 100);
 });
+
+window.syncCustomSelect = function (selectElement) {
+  if (!selectElement) return;
+  const instance = customSelectInstances.find(item => item.selectElement === selectElement);
+  if (instance) {
+    instance.syncFromSelect();
+  }
+};

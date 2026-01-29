@@ -11,30 +11,38 @@ head %}
         <h1 class="dashboard-title">GENIUS AUTOWRITER</h1>
         <p class="dashboard-subtitle" data-translate="Content Creation">Content Creation</p>
       </div>
-      <button
-        id="change-api-key-btn"
-        class="change-api-key-btn"
-        type="button"
-        data-current-key="{{ current_user.api_key or '' }}"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="lucide lucide-key-icon lucide-key"
+      <div class="dashboard-header-actions">
+        {% if current_user.user_type == 'normal' %}
+        <div class="dashboard-credit-card">
+          <span class="dashboard-credit-label" data-translate="Image Credits">Image Credits</span>
+          <span class="dashboard-credit-count" data-image-credit-count>0</span>
+        </div>
+        {% endif %}
+        <button
+          id="change-api-key-btn"
+          class="change-api-key-btn"
+          type="button"
+          data-current-key="{{ current_user.api_key or '' }}"
         >
-          <path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4" />
-          <path d="m21 2-9.6 9.6" />
-          <circle cx="7.5" cy="15.5" r="5.5" />
-        </svg>
-        <span data-translate="Change API Key">Change API Key</span>
-      </button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-key-icon lucide-key"
+          >
+            <path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4" />
+            <path d="m21 2-9.6 9.6" />
+            <circle cx="7.5" cy="15.5" r="5.5" />
+          </svg>
+          <span data-translate="Change API Key">Change API Key</span>
+        </button>
+      </div>
     </div>
 
     <!-- Content Generation Form -->
@@ -232,7 +240,7 @@ head %}
             <button
               type="button"
               id="remove-image-btn"
-              onclick="event.stopPropagation();"
+              onclick="event.stopPropagation()"
               style="
                 position: absolute;
                 top: -8px;

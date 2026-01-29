@@ -1,0 +1,468 @@
+{% extends "layout.html" %} {% block title %}Generate Image - Genius AutoWriter{% endblock %} {%
+block head %}
+<script src="{{ url_for('static', filename='js/image-generator.js') }}?v=2.4" defer></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/image-generator.css') }}?v=2.4" />
+{% endblock %} {% block content %}
+<div class="min-h-screen py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div class="image-generator-header">
+      <div>
+        <h1 class="image-generator-title" data-translate="Image Generator">Image Generator</h1>
+        <p
+          class="image-generator-subtitle"
+          data-translate="Design product visuals with your assets"
+        >
+          Design product visuals with your assets
+        </p>
+      </div>
+      <div class="image-credit-card">
+        <span class="image-credit-label" data-translate="Image Credits">Image Credits</span>
+        <span class="image-credit-count" data-image-credit-count>0</span>
+      </div>
+    </div>
+    <!-- Main Layout - Two Column Grid -->
+    <div class="image-generator-grid">
+      <!-- Left Column - Form -->
+      <div class="form-column">
+        <!-- Section 01: ASSETS -->
+        <div class="form-section">
+          <div class="section-header">
+            <span class="section-number">01</span>
+            <h2 class="section-title" data-translate="ASSETS">ASSETS</h2>
+          </div>
+
+          <div class="assets-grid">
+            <!-- Product Photo Upload -->
+            <div class="asset-upload-box">
+              <label class="asset-label">
+                <span data-translate="PRODUCT PHOTO">PRODUCT PHOTO</span>
+                <span class="required-asterisk">*</span>
+              </label>
+              <div
+                id="product-upload-area"
+                class="upload-area"
+                onclick="document.getElementById('product-upload').click()"
+              >
+                <input type="file" id="product-upload" accept="image/*" style="display: none" />
+                <div id="product-preview-container" class="preview-container" style="display: none">
+                  <img id="product-preview" src="" alt="Product Preview" />
+                  <button
+                    type="button"
+                    id="remove-product-btn"
+                    class="remove-btn"
+                    onclick="
+                      event.stopPropagation();
+                      removeProductImage();
+                    "
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+                <div id="product-upload-placeholder" class="upload-placeholder">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="upload-icon"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="1.5"
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                  <span class="upload-text" data-translate="UPLOAD PRODUCT">UPLOAD PRODUCT</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Brand Logo Upload -->
+            <div class="asset-upload-box">
+              <label class="asset-label">
+                <span data-translate="BRAND LOGO (OPTIONAL)">BRAND LOGO (OPTIONAL)</span>
+              </label>
+              <div
+                id="logo-upload-area"
+                class="upload-area"
+                onclick="document.getElementById('logo-upload').click()"
+              >
+                <input type="file" id="logo-upload" accept="image/*" style="display: none" />
+                <div id="logo-preview-container" class="preview-container" style="display: none">
+                  <img id="logo-preview" src="" alt="Logo Preview" />
+                  <button
+                    type="button"
+                    id="remove-logo-btn"
+                    class="remove-btn"
+                    onclick="
+                      event.stopPropagation();
+                      removeLogoImage();
+                    "
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+                <div id="logo-upload-placeholder" class="upload-placeholder">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="upload-icon"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="1.5"
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                  <span class="upload-text" data-translate="UPLOAD LOGO">UPLOAD LOGO</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 02: COPY -->
+        <div class="form-section">
+          <div class="section-header">
+            <span class="section-number">02</span>
+            <h2 class="section-title" data-translate="COPY">COPY</h2>
+          </div>
+
+          <div class="copy-form-grid">
+            <!-- Main Headline -->
+            <div class="form-field">
+              <label for="main-headline" class="field-label" data-translate="MAIN HEADLINE"
+                >MAIN HEADLINE</label
+              >
+              <input
+                type="text"
+                id="main-headline"
+                class="form-input"
+                placeholder="Summer Sale"
+                data-placeholder="Summer Sale"
+              />
+            </div>
+
+            <!-- Subtext -->
+            <div class="form-field">
+              <label for="subtext" class="field-label" data-translate="SUBTEXT">SUBTEXT</label>
+              <input
+                type="text"
+                id="subtext"
+                class="form-input"
+                placeholder="Limited Offer"
+                data-placeholder="Limited Offer"
+              />
+            </div>
+
+            <!-- Product Name -->
+            <div class="form-field">
+              <label for="product-name" class="field-label" data-translate="PRODUCT NAME"
+                >PRODUCT NAME</label
+              >
+              <input
+                type="text"
+                id="product-name"
+                class="form-input"
+                placeholder="Aero Pro 1"
+                data-placeholder="Aero Pro 1"
+              />
+            </div>
+
+            <!-- Price -->
+            <div class="form-field">
+              <label for="price" class="field-label" data-translate="PRICE">PRICE</label>
+              <input
+                type="text"
+                id="price"
+                class="form-input"
+                placeholder="999999 ks"
+                data-placeholder="999999 ks"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 03: STYLE -->
+        <div class="form-section">
+          <div class="section-header">
+            <span class="section-number">03</span>
+            <h2 class="section-title" data-translate="STYLE">STYLE</h2>
+          </div>
+
+          <div class="style-form-grid">
+            <!-- Palette/Theme -->
+            <div class="form-field">
+              <label for="palette-theme" class="field-label" data-translate="PALETTE/THEME"
+                >PALETTE/THEME</label
+              >
+              <div class="select-wrapper">
+                <select id="palette-theme" class="form-select">
+                  <option value="red-black" data-translate="Red & Black">Red & Black</option>
+                  <option value="modern-black" data-translate="Modern Black">Modern Black</option>
+                  <option value="clean-white" data-translate="Clean White">Clean White</option>
+                  <option value="luxury-gold" data-translate="Luxury Gold">Luxury Gold</option>
+                  <option value="royal-blue" data-translate="Royal Blue">Royal Blue</option>
+                  <option value="pastel-pink" data-translate="Pastel Pink">Pastel Pink</option>
+                  <option value="forest-green" data-translate="Forest Green">Forest Green</option>
+                  <option value="dark-mode" data-translate="Dark Mode">Dark Mode</option>
+                  <option value="light-minimalist" data-translate="Light Minimalist">
+                    Light Minimalist
+                  </option>
+                  <option value="electric-purple" data-translate="Electric Purple">
+                    Electric Purple
+                  </option>
+                  <option value="sunset-gradient" data-translate="Sunset Gradient">
+                    Sunset Gradient
+                  </option>
+                  <option value="corporate-grey" data-translate="Corporate Grey">
+                    Corporate Grey
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Logo Tint -->
+            <div class="form-field">
+              <label class="field-label" data-translate="LOGO TINT">LOGO TINT</label>
+              <div class="logo-tint-picker disabled" id="logo-tint-container">
+                <label class="color-picker-circle" id="color-picker-circle">
+                  <input
+                    type="color"
+                    id="logo-tint-color"
+                    class="color-input-hidden"
+                    value="#ffffff"
+                  />
+                </label>
+                <input
+                  type="text"
+                  id="logo-tint-text"
+                  class="logo-tint-text-input"
+                  value="ORIGINAL"
+                  placeholder="ORIGINAL"
+                />
+                <button
+                  type="button"
+                  id="back-to-original-btn"
+                  class="back-to-original-btn hidden"
+                  onclick="resetLogoTint()"
+                >
+                  BACK TO ORIGINAL
+                </button>
+              </div>
+            </div>
+
+            <!-- Style -->
+            <div class="form-field">
+              <label for="image-style" class="field-label" data-translate="STYLE">STYLE</label>
+              <div class="select-wrapper">
+                <select id="image-style" class="form-select">
+                  <option value="modern-minimalist" data-translate="Modern Minimalist">
+                    Modern Minimalist
+                  </option>
+                  <option value="luxury-premium" data-translate="Luxury Premium">
+                    Luxury Premium
+                  </option>
+                  <option value="corporate-professional" data-translate="Corporate Professional">
+                    Corporate Professional
+                  </option>
+                  <option value="creative-abstract" data-translate="Creative Abstract">
+                    Creative Abstract
+                  </option>
+                  <option value="product-showcase" data-translate="Product Showcase">
+                    Product Showcase
+                  </option>
+                  <option value="social-media-ads" data-translate="Social Media Ads">
+                    Social Media Ads
+                  </option>
+                  <option value="poster-style" data-translate="Poster Style">Poster Style</option>
+                  <option value="clean-apple-esque" data-translate="Clean Apple-esque">
+                    Clean Apple-esque
+                  </option>
+                  <option value="bold-high-contrast" data-translate="Bold High Contrast">
+                    Bold High Contrast
+                  </option>
+                  <option value="flat-design" data-translate="Flat Design">Flat Design</option>
+                  <option value="streetwear-urban" data-translate="Streetwear Urban">
+                    Streetwear Urban
+                  </option>
+                  <option value="ecommerce-standard" data-translate="E-commerce Standard">
+                    E-commerce Standard
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Quantity -->
+            <div class="form-field">
+              <label for="quantity" class="field-label" data-translate="QUANTITY">QUANTITY</label>
+              <div class="select-wrapper">
+                <select id="quantity" class="form-select">
+                  <option value="1" data-translate="1 image">1 image</option>
+                  <option value="2" data-translate="2 images">2 images</option>
+                  <option value="3" data-translate="3 images">3 images</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Extra Directions -->
+          <div class="form-field extra-directions">
+            <label for="extra-directions" class="field-label" data-translate="EXTRA DIRECTIONS"
+              >EXTRA DIRECTIONS</label
+            >
+            <textarea
+              id="extra-directions"
+              class="form-textarea"
+              rows="3"
+              placeholder="e.g.Add the uploaded logo at the left of the product image / Add cinematic fog and neon lights"
+              data-placeholder="e.g.Add the uploaded logo at the left of the product image / Add cinematic fog and neon lights"
+            ></textarea>
+          </div>
+
+          <!-- Generate Button -->
+          <button id="generate-image-btn" class="generate-btn">
+            <svg
+              id="generate-spinner"
+              class="animate-spin hidden"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            <span id="generate-btn-text" data-translate="GENERATE">GENERATE</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Column - Preview -->
+      <div class="preview-column">
+        <div class="preview-section">
+          <div class="preview-header">
+            <button id="render-btn" class="render-btn" data-translate="RENDER">RENDER</button>
+            <h2 class="preview-title" data-translate="PREVIEW">PREVIEW</h2>
+          </div>
+
+          <div id="preview-area" class="preview-area">
+            <!-- Loading Overlay -->
+            <div id="preview-loading" class="preview-loading" style="display: none">
+              <div class="loading-spinner-container">
+                <div class="loading-spinner"></div>
+                <div class="loading-spinner-ring"></div>
+              </div>
+              <p data-translate="Generating your image...">Generating your image...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="preview-empty" class="preview-empty">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="empty-icon"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1"
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              <p class="empty-text" data-translate="WAITING FOR ASSETS">WAITING FOR ASSETS</p>
+            </div>
+
+            <!-- Generated Images Container -->
+            <div id="generated-images" class="generated-images" style="display: none">
+              <!-- Generated images will be inserted here dynamically -->
+            </div>
+          </div>
+
+          <!-- Action Buttons (visible after generation) -->
+          <div id="preview-actions" class="preview-actions" style="display: none">
+            <button id="download-btn" class="action-btn download-btn">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="action-icon"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                />
+              </svg>
+              <span data-translate="Download">Download</span>
+            </button>
+            <button id="regenerate-btn" class="action-btn regenerate-btn">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="action-icon"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+              <span data-translate="Regenerate">Regenerate</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
