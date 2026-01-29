@@ -988,6 +988,10 @@ block content %}
     // Set initial field visibility (trial user by default)
     toggleCreateSubscriptionFields();
 
+    if (window.syncCustomSelect) {
+      window.syncCustomSelect(document.getElementById('create-user-type'));
+    }
+
     // Fetch CSRF token from the create_user page
     console.log('Fetching CSRF token from create_user page...');
     fetch('/admin/users/create')
@@ -1029,6 +1033,10 @@ block content %}
     modal.classList.add('hidden');
     modal.style.display = 'none';
     document.getElementById('create-user-form').reset();
+    toggleCreateSubscriptionFields();
+    if (window.syncCustomSelect) {
+      window.syncCustomSelect(document.getElementById('create-user-type'));
+    }
   }
 
   function toggleCreateSubscriptionFields() {
