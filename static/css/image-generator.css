@@ -509,6 +509,12 @@
   color: #6b7280;
 }
 
+/* Logo Tint Field Hidden State - completely hide when no logo uploaded */
+#logo-tint-field.hidden,
+.form-field.hidden {
+  display: none !important;
+}
+
 /* Extra Directions */
 .extra-directions {
   margin-top: 1rem;
@@ -810,9 +816,7 @@
     flex-direction: column;
   }
 
-  .preview-column {
-    order: -1;
-  }
+  /* Preview column stays in natural order (after form) on mobile */
 }
 
 /* Utility Classes */

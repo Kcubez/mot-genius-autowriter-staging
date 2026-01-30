@@ -1,6 +1,11 @@
 {% extends "layout.html" %} {% block title %}Dashboard - Genius AutoWriter{% endblock %} {% block
 head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}" />
+<script>
+  // Expose user type to JavaScript
+  window.userType = "{{ current_user.user_type or 'normal' }}";
+  window.isAdmin = "{{ 'true' if current_user.is_admin else 'false' }}" === 'true';
+</script>
 <script src="{{ url_for('static', filename='js/dashboard.js') }}" defer></script>
 {% endblock %} {% block content %}
 <div class="min-h-screen py-8">

@@ -1243,6 +1243,28 @@ const translations = {
     my: 'ဒေါင်းလုဒ်လုပ်ရန် ပုံမရှိပါ',
     en: 'No images to download',
   },
+
+  // Content to Image Generator Flow
+  'Create Image?': {
+    my: 'ပုံဖန်တီးမလား?',
+    en: 'Create Image?',
+  },
+  'Do you want to create an image from this content?': {
+    my: 'ဤ Content ကို အသုံးပြု၍ ပုံဖန်တီးလိုပါသလား?',
+    en: 'Do you want to create an image from this content?',
+  },
+  Yes: {
+    my: 'ဟုတ်ကဲ့',
+    en: 'Yes',
+  },
+  No: {
+    my: 'မလုပ်တော့ပါ',
+    en: 'No',
+  },
+  'Content has been loaded into Extra Directions': {
+    my: 'Content ကို Extra Directions ထဲသို့ ထည့်သွင်းပြီးပါပြီ',
+    en: 'Content has been loaded into Extra Directions',
+  },
 };
 
 // Get current language from localStorage or default to Myanmar

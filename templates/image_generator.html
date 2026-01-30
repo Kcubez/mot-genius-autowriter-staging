@@ -1,7 +1,7 @@
 {% extends "layout.html" %} {% block title %}Generate Image - Genius AutoWriter{% endblock %} {%
 block head %}
-<script src="{{ url_for('static', filename='js/image-generator.js') }}?v=2.4" defer></script>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/image-generator.css') }}?v=2.4" />
+<script src="{{ url_for('static', filename='js/image-generator.js') }}?v=2.5" defer></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/image-generator.css') }}?v=2.6" />
 {% endblock %} {% block content %}
 <div class="min-h-screen py-8">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
@@ -255,7 +255,7 @@ block head %}
             </div>
 
             <!-- Logo Tint -->
-            <div class="form-field">
+            <div class="form-field hidden" id="logo-tint-field">
               <label class="field-label" data-translate="LOGO TINT">LOGO TINT</label>
               <div class="logo-tint-picker disabled" id="logo-tint-container">
                 <label class="color-picker-circle" id="color-picker-circle">

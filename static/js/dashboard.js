@@ -438,10 +438,8 @@ document.addEventListener('DOMContentLoaded', function () {
           } else {
             titleKey = 'Your trial period has ended.'; // fallback
           }
-          
-          const expiredTitle = window.getTranslation
-            ? window.getTranslation(titleKey)
-            : titleKey;
+
+          const expiredTitle = window.getTranslation ? window.getTranslation(titleKey) : titleKey;
           notify.error(translatedError, expiredTitle);
         } else {
           notify.error(translatedError, 'Generation Failed');
@@ -468,6 +466,33 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         notify.success('Content generated successfully!', 'Success');
+
+        // Ask user if they want to generate an image from this content
+        // Only show this prompt for normal users (not admins)
+        if (!window.isAdmin && window.userType === 'normal') {
+          setTimeout(async () => {
+            const askImageTitle = window.getTranslation
+              ? window.getTranslation('Create Image?')
+              : 'Create Image?';
+            const askImageMessage = window.getTranslation
+              ? window.getTranslation('Do you want to create an image from this content?')
+              : 'Do you want to create an image from this content?';
+            const yesText = window.getTranslation ? window.getTranslation('Yes') : 'Yes';
+            const noText = window.getTranslation ? window.getTranslation('No') : 'No';
+
+            const wantsImage = await modal.confirm(askImageMessage, askImageTitle, {
+              confirmText: yesText,
+              cancelText: noText,
+            });
+
+            if (wantsImage) {
+              // Store the generated content in sessionStorage for the image generator page
+              sessionStorage.setItem('generatedContentForImage', data.content);
+              // Redirect to image generator page
+              window.location.href = '/image-generator';
+            }
+          }, 500);
+        }
       }
     } catch (error) {
       console.error('Error:', error);
@@ -816,8 +841,8 @@ function addToRecentContentList(contentData) {
             </a>
           </h3>
           <p class="text-sm break-words">${contentData.content.substring(0, 60)}${
-      contentData.content.length > 60 ? '...' : ''
-    }</p>
+            contentData.content.length > 60 ? '...' : ''
+          }</p>
           <p class="text-xs">${timeString}</p>
         </div>
         <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-600 text-white self-start sm:ml-4">
@@ -839,9 +864,9 @@ function addToRecentContentList(contentData) {
 
 // Function to disable navigation links during content generation
 function disableNavigationLinks() {
-  // Find all navigation links (including voice generator)
+  // Find all navigation links (including voice generator and image generator)
   const navLinks = document.querySelectorAll(
-    'a[href*="dashboard"], a[href*="content"], a[href*="history"], a[href*="voice"]'
+    'a[href*="dashboard"], a[href*="content"], a[href*="history"], a[href*="voice"], a[href*="image-generator"]'
   );
 
   navLinks.forEach(link => {
@@ -871,8 +896,10 @@ function disableNavigationLinks() {
     'a[href="/contents"]',
     'a[href*="content_history"]',
     'a[href="/voice-generator"]',
+    'a[href="/image-generator"]',
     'a[data-translate="View All"]',
     'a[data-translate="Voice Input"]',
+    'a[data-translate="Generate Image"]',
   ];
 
   specificLinks.forEach(selector => {

@@ -94,6 +94,25 @@ function initializeImageGenerator() {
 
   // Apply language translations
   applyTranslations();
+
+  // Check if there's generated content from the content generator page
+  const generatedContent = sessionStorage.getItem('generatedContentForImage');
+  if (generatedContent) {
+    const extraDirectionsField = document.getElementById('extra-directions');
+    if (extraDirectionsField) {
+      extraDirectionsField.value = generatedContent;
+      // Clear the storage so it doesn't persist on refresh
+      sessionStorage.removeItem('generatedContentForImage');
+
+      // Show a notification that content was loaded
+      if (window.notify) {
+        const message = window.getTranslation
+          ? window.getTranslation('Content has been loaded into Extra Directions')
+          : 'Content has been loaded into Extra Directions';
+        window.notify.info(message);
+      }
+    }
+  }
 }
 
 /**
@@ -433,9 +452,19 @@ function resetLogoTint() {
 
 /**
  * Enable or disable the Logo Tint picker based on whether logo is uploaded
+ * Also shows/hides the entire Logo Tint field
  */
 function setLogoTintEnabled(enabled) {
   const logoTintContainer = document.getElementById('logo-tint-container');
+  const logoTintField = document.getElementById('logo-tint-field');
+
+  if (logoTintField) {
+    if (enabled) {
+      logoTintField.classList.remove('hidden');
+    } else {
+      logoTintField.classList.add('hidden');
+    }
+  }
 
   if (logoTintContainer) {
     if (enabled) {
