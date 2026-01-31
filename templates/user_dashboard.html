@@ -17,12 +17,6 @@ head %}
         <p class="dashboard-subtitle" data-translate="Content Creation">Content Creation</p>
       </div>
       <div class="dashboard-header-actions">
-        {% if current_user.user_type == 'normal' %}
-        <div class="dashboard-credit-card">
-          <span class="dashboard-credit-label" data-translate="Image Credits">Image Credits</span>
-          <span class="dashboard-credit-count" data-image-credit-count>0</span>
-        </div>
-        {% endif %}
         <button
           id="change-api-key-btn"
           class="change-api-key-btn"

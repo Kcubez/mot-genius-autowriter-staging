@@ -103,14 +103,6 @@ function initializeImageGenerator() {
       extraDirectionsField.value = generatedContent;
       // Clear the storage so it doesn't persist on refresh
       sessionStorage.removeItem('generatedContentForImage');
-
-      // Show a notification that content was loaded
-      if (window.notify) {
-        const message = window.getTranslation
-          ? window.getTranslation('Content has been loaded into Extra Directions')
-          : 'Content has been loaded into Extra Directions';
-        window.notify.info(message);
-      }
     }
   }
 }

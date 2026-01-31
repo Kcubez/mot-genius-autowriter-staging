@@ -419,7 +419,7 @@ const translations = {
     en: 'Negative Constraints',
   },
   'Upload an image (Optional):': {
-    my: 'ပုံတစ်ပုံ ထည့်ပါ (မဖြစ်မနေ မလိုအပ်ပါ):',
+    my: 'ပုံတစ်ပုံ ထည့်ပါ (Optional):',
     en: 'Upload an image (Optional):',
   },
   'Upload Image': {
@@ -862,7 +862,7 @@ const translations = {
     en: 'Voice recording saved successfully! Ready for content generation.',
   },
   'Image (Optional)': {
-    my: 'ပုံ (မဖြစ်မနေ မလိုအပ်ပါ)',
+    my: 'ပုံ (Optional)',
     en: 'Image (Optional)',
   },
   'Upload Image': {
@@ -1018,7 +1018,7 @@ const translations = {
     en: 'PRODUCT PHOTO',
   },
   'BRAND LOGO (OPTIONAL)': {
-    my: 'Brand Logo (မဖြစ်မနေ မလိုအပ်)',
+    my: 'Brand Logo (OPTIONAL)',
     en: 'BRAND LOGO (OPTIONAL)',
   },
   'UPLOAD PRODUCT': {
@@ -1260,10 +1260,6 @@ const translations = {
   No: {
     my: 'မလုပ်တော့ပါ',
     en: 'No',
-  },
-  'Content has been loaded into Extra Directions': {
-    my: 'Content ကို Extra Directions ထဲသို့ ထည့်သွင်းပြီးပါပြီ',
-    en: 'Content has been loaded into Extra Directions',
   },
 };
 
