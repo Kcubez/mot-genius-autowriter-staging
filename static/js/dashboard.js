@@ -467,32 +467,31 @@ document.addEventListener('DOMContentLoaded', function () {
 
         notify.success('Content generated successfully!', 'Success');
 
-        // Ask user if they want to generate an image from this content
-        // Only show this prompt for normal users (not admins)
-        if (!window.isAdmin && window.userType === 'normal') {
-          setTimeout(async () => {
-            const askImageTitle = window.getTranslation
-              ? window.getTranslation('Create Image?')
-              : 'Create Image?';
-            const askImageMessage = window.getTranslation
-              ? window.getTranslation('Do you want to create an image from this content?')
-              : 'Do you want to create an image from this content?';
-            const yesText = window.getTranslation ? window.getTranslation('Yes') : 'Yes';
-            const noText = window.getTranslation ? window.getTranslation('No') : 'No';
-
-            const wantsImage = await modal.confirm(askImageMessage, askImageTitle, {
-              confirmText: yesText,
-              cancelText: noText,
-            });
-
-            if (wantsImage) {
-              // Store the generated content in sessionStorage for the image generator page
-              sessionStorage.setItem('generatedContentForImage', data.content);
-              // Redirect to image generator page
-              window.location.href = '/image-generator';
-            }
-          }, 500);
-        }
+        // HIDDEN: Image generation confirmation modal - uncomment to restore
+        // if (!window.isAdmin && window.userType === 'normal') {
+        //   setTimeout(async () => {
+        //     const askImageTitle = window.getTranslation
+        //       ? window.getTranslation('Create Image?')
+        //       : 'Create Image?';
+        //     const askImageMessage = window.getTranslation
+        //       ? window.getTranslation('Do you want to create an image from this content?')
+        //       : 'Do you want to create an image from this content?';
+        //     const yesText = window.getTranslation ? window.getTranslation('Yes') : 'Yes';
+        //     const noText = window.getTranslation ? window.getTranslation('No') : 'No';
+        //
+        //     const wantsImage = await modal.confirm(askImageMessage, askImageTitle, {
+        //       confirmText: yesText,
+        //       cancelText: noText,
+        //     });
+        //
+        //     if (wantsImage) {
+        //       // Store the generated content in sessionStorage for the image generator page
+        //       sessionStorage.setItem('generatedContentForImage', data.content);
+        //       // Redirect to image generator page
+        //       window.location.href = '/image-generator';
+        //     }
+        //   }, 500);
+        // }
       }
     } catch (error) {
       console.error('Error:', error);
