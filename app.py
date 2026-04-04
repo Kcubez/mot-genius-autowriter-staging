@@ -10,7 +10,8 @@ from werkzeug.utils import secure_filename
 import os
 import logging
 import json
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 import PIL.Image
 from datetime import datetime
 import math
@@ -439,12 +440,11 @@ def inject_now():
 # Configure Google Gemini API
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel('gemini-2.5-flash')
+    client = genai.Client(api_key=GEMINI_API_KEY)
     logging.info("Gemini API configured successfully")
 else:
     logging.warning("GEMINI_API_KEY not found in environment variables")
-    model = None
+    client = None
 
 # Global error handlers
 @app.errorhandler(Exception)
@@ -1695,8 +1695,7 @@ def generate_content():
         
         # Configure Gemini with user's API key
         try:
-            genai.configure(api_key=api_key_to_use)
-            user_model = genai.GenerativeModel('gemini-2.5-flash')
+            user_client = genai.Client(api_key=api_key_to_use)
             logging.info(f"User's Gemini API configured successfully using {'session' if current_user.api_key else 'database'} API key")
         except Exception as api_error:
             logging.error(f"Error configuring user's API key: {api_error}")
@@ -2046,25 +2045,19 @@ Avoid/Don't include: {negative_constraints}
                 
                 logging.info(f"Audio file saved to: {temp_audio.name}")
                 
-                # Use Gemini 2.5 Flash with audio support
-                voice_model = genai.GenerativeModel('gemini-2.5-flash')
-                
+                # Use Gemini 2.5 Flash SDK Client
+                # (Client is already set in user_client)
                 # Read audio file as bytes for inline upload (avoid ragStoreName requirement)
                 with open(temp_audio.name, 'rb') as audio_file_handle:
                     audio_bytes = audio_file_handle.read()
                 
                 logging.info(f"Audio file loaded: {len(audio_bytes)} bytes")
                 
-                # Create inline audio part instead of uploading file
-                import base64
-                audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
-                
-                audio_part = {
-                    "inline_data": {
-                        "mime_type": "audio/webm",
-                        "data": audio_base64
-                    }
-                }
+                # Create inline audio part from bytes
+                audio_part = types.Part.from_bytes(
+                    data=audio_bytes,
+                    mime_type="audio/webm"
+                )
                 
                 logging.info("Audio prepared for inline submission")
                 
@@ -2097,7 +2090,10 @@ IMPORTANT: The content MUST be based on the audio recording. Listen to what is a
                     audio_contents.append(contents[1])
                 
                 logging.info("Sending voice prompt, audio, and image (if any) to Gemini native audio model.")
-                response = voice_model.generate_content(audio_contents)
+                response = user_client.models.generate_content(
+                    model='gemini-2.5-flash',
+                    contents=audio_contents
+                )
                 
                 # Clean up temp file
                 try:
@@ -2119,10 +2115,16 @@ IMPORTANT: The content MUST be based on the audio recording. Listen to what is a
             # Regular generation (text + image if present)
             if len(contents) > 1:
                 logging.info("Sending prompt and image to Gemini.")
-                response = user_model.generate_content(contents)
+                response = user_client.models.generate_content(
+                    model='gemini-2.5-flash',
+                    contents=contents
+                )
             else:
                 logging.info("Sending text-only prompt to Gemini.")
-                response = user_model.generate_content(enhanced_prompt)
+                response = user_client.models.generate_content(
+                    model='gemini-2.5-flash',
+                    contents=enhanced_prompt
+                )
 
         # Ensure response has text content
         if hasattr(response, 'text') and response.text:

@@ -4,7 +4,6 @@ Flask-SQLAlchemy
 Flask-Login
 gunicorn
 python-dotenv
-google-generativeai
 psycopg2-binary
 Flask-WTF
 WTForms
